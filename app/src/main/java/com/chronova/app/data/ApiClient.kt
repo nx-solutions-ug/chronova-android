@@ -7,22 +7,22 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object ApiClient {
-    
-    private const val DEFAULT_BASE_URL = "https://chronova.dev/"
+
+    private const val DEFAULT_BASE_URL = "https://app.chronova.dev/"
     private var currentBaseUrl = DEFAULT_BASE_URL
     private var currentRetrofit: Retrofit? = null
-    
+
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
     }
-    
+
     private val httpClient = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
         .connectTimeout(30, TimeUnit.SECONDS)
         .readTimeout(30, TimeUnit.SECONDS)
         .writeTimeout(30, TimeUnit.SECONDS)
         .build()
-    
+
     private fun createRetrofit(baseUrl: String): Retrofit {
         return Retrofit.Builder()
             .baseUrl(ensureTrailingSlash(baseUrl))
@@ -30,11 +30,11 @@ object ApiClient {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
-    
+
     private fun ensureTrailingSlash(url: String): String {
         return if (url.endsWith("/")) url else "$url/"
     }
-    
+
     fun updateBaseUrl(baseUrl: String) {
         val normalizedUrl = ensureTrailingSlash(baseUrl)
         if (normalizedUrl != currentBaseUrl) {
@@ -42,7 +42,7 @@ object ApiClient {
             currentRetrofit = null // Force recreation
         }
     }
-    
+
     val apiService: ChronovaApiService
         get() {
             if (currentRetrofit == null) {

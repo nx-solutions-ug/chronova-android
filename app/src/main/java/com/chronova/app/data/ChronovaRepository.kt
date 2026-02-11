@@ -5,32 +5,32 @@ import android.content.SharedPreferences
 import retrofit2.Response
 
 class ChronovaRepository(context: Context) {
-    
+
     private val prefs: SharedPreferences = context.getSharedPreferences("chronova_prefs", Context.MODE_PRIVATE)
     private val apiService = ApiClient.apiService
-    
+
     fun saveApiKey(apiKey: String) {
         prefs.edit().putString("api_key", apiKey).apply()
     }
-    
+
     fun getApiKey(): String? {
         return prefs.getString("api_key", null)
     }
-    
+
     fun saveServerUrl(serverUrl: String) {
         prefs.edit().putString("server_url", serverUrl).apply()
         ApiClient.updateBaseUrl(serverUrl)
     }
-    
+
     fun getServerUrl(): String {
-        return prefs.getString("server_url", "https://chronova.dev/") ?: "https://chronova.dev/"
+        return prefs.getString("server_url", "https://app.chronova.dev/") ?: "https://app.chronova.dev/"
     }
-    
+
     fun isValidUrl(url: String): Boolean {
         return try {
             val trimmedUrl = url.trim()
             if (trimmedUrl.isEmpty()) return false
-            
+
             // Basic URL validation
             val urlPattern = Regex("^https?://[a-zA-Z0-9.-]+(?:\\.[a-zA-Z]{2,})?(?::[0-9]+)?(?:/.*)?$")
             urlPattern.matches(trimmedUrl)
@@ -38,19 +38,19 @@ class ChronovaRepository(context: Context) {
             false
         }
     }
-    
+
     fun clearAuth() {
         prefs.edit().remove("api_key").apply()
     }
-    
+
     fun isAuthenticated(): Boolean {
         return getApiKey() != null
     }
-    
+
     private fun getAuthHeader(): String? {
         return getApiKey()?.let { "Bearer $it" }
     }
-    
+
     suspend fun login(email: String, password: String): Result<LoginResponse> {
         return try {
             val response = apiService.login(LoginRequest(email, password))
@@ -63,18 +63,18 @@ class ChronovaRepository(context: Context) {
             Result.failure(e)
         }
     }
-    
+
     suspend fun getDashboard(): Result<DashboardResponse> {
         val authHeader = getAuthHeader() ?: return Result.failure(Exception("No authentication"))
         return try {
             // Get weekly stats and recent activity
             val statsResponse = apiService.getStats(authHeader, "last_7_days")
             val heartbeatsResponse = apiService.getHeartbeats(authHeader, 10)
-            
+
             if (statsResponse.isSuccessful && heartbeatsResponse.isSuccessful) {
                 val stats = statsResponse.body()?.data
                 val heartbeats = heartbeatsResponse.body()?.data
-                
+
                 if (stats != null && heartbeats != null) {
                     val dashboard = transformToDashboard(stats, heartbeats)
                     Result.success(dashboard)
@@ -90,7 +90,7 @@ class ChronovaRepository(context: Context) {
             Result.failure(e)
         }
     }
-    
+
     suspend fun getLanguages(): Result<LanguageResponse> {
         val authHeader = getAuthHeader() ?: return Result.failure(Exception("No authentication"))
         return try {
@@ -118,7 +118,7 @@ class ChronovaRepository(context: Context) {
             Result.failure(e)
         }
     }
-    
+
     suspend fun getProjects(): Result<ProjectResponse> {
         val authHeader = getAuthHeader() ?: return Result.failure(Exception("No authentication"))
         return try {
@@ -146,7 +146,7 @@ class ChronovaRepository(context: Context) {
             Result.failure(e)
         }
     }
-    
+
     suspend fun getEditors(): Result<EditorResponse> {
         val authHeader = getAuthHeader() ?: return Result.failure(Exception("No authentication"))
         return try {
@@ -186,7 +186,7 @@ class ChronovaRepository(context: Context) {
                 "all_time" -> "all_time"
                 else -> "today"
             }
-            
+
             val response = apiService.getStats(authHeader, apiRange)
             if (response.isSuccessful && response.body() != null) {
                 val stats = response.body()?.data
@@ -194,10 +194,10 @@ class ChronovaRepository(context: Context) {
                     val languagesMap = stats.languages.associate { it.name to it.totalSeconds.toLong() }
                     val projectsMap = stats.projects.associate { it.name to it.totalSeconds.toLong() }
                     val editorsMap = stats.editors.associate { it.name to it.totalSeconds.toLong() }
-                    
+
                     // Generate mock daily activity data (could be enhanced with real data)
                     val dailyActivity = generateDailyActivity(stats.dailyStats)
-                    
+
                     val rangeData = StatsRangeData(
                         totalSeconds = stats.totalSeconds.toLong(),
                         languages = languagesMap,
@@ -259,14 +259,14 @@ class ChronovaRepository(context: Context) {
             val response = apiService.getHeartbeats(authHeader, perPage)
             if (response.isSuccessful && response.body() != null) {
                 val heartbeats = response.body()?.data ?: emptyList()
-                
+
                 // Group heartbeats by file and calculate time spent
                 val fileMap = mutableMapOf<String, FileActivityBuilder>()
-                
+
                 heartbeats.forEach { heartbeat ->
                     val filename = heartbeat.entity.split("/").lastOrNull() ?: heartbeat.entity
                     val key = "$filename|${heartbeat.project}|${heartbeat.language}"
-                    
+
                     if (fileMap.containsKey(key)) {
                         fileMap[key]!!.addTime(heartbeat.time)
                     } else {
@@ -280,12 +280,12 @@ class ChronovaRepository(context: Context) {
                         )
                     }
                 }
-                
+
                 // Convert to FileActivity list and sort by time spent
                 val fileActivities = fileMap.values
                     .map { it.build() }
                     .sortedByDescending { it.timeSpent }
-                
+
                 Result.success(fileActivities)
             } else {
                 Result.failure(Exception("Failed to get file activity: ${response.code()} - ${response.message()}"))
@@ -294,13 +294,13 @@ class ChronovaRepository(context: Context) {
             Result.failure(e)
         }
     }
-    
+
     // Transformation functions to convert WakaTime API data to Android UI format
     private fun transformToDashboard(stats: WakaTimeStatsData, heartbeats: List<WakaTimeHeartbeatData>): DashboardResponse {
         val totalSeconds = if (stats.totalSeconds > 0) stats.totalSeconds else 0.0
         val totalHours = totalSeconds / 3600.0
         val weeklyHours = totalSeconds / 3600.0 // This is already weekly data
-        
+
         // Transform daily data from API response
         val dailyData = if (stats.dailyStats?.isNotEmpty() == true) {
             // Use real daily stats from API
@@ -319,7 +319,7 @@ class ChronovaRepository(context: Context) {
                 )
             }
         }
-        
+
         // Transform languages
         val languageData = stats.languages.take(5).map { lang ->
             LanguageData(
@@ -328,8 +328,8 @@ class ChronovaRepository(context: Context) {
                 color = getLanguageColor(lang.name)
             )
         }
-        
-        // Transform projects  
+
+        // Transform projects
         val projectData = stats.projects.take(5).map { proj ->
             ProjectData(
                 name = proj.name,
@@ -338,7 +338,7 @@ class ChronovaRepository(context: Context) {
                 color = getProjectColor(proj.name)
             )
         }
-        
+
         // Transform recent activity
         val recentActivity = heartbeats.map { hb ->
             val filename = hb.entity.split("/").lastOrNull() ?: hb.entity
@@ -350,7 +350,7 @@ class ChronovaRepository(context: Context) {
                 duration = "Active"
             )
         }
-        
+
         return DashboardResponse(
             totalHours = maxOf(0.0, totalHours),
             weeklyHours = maxOf(0.0, weeklyHours),
@@ -362,7 +362,7 @@ class ChronovaRepository(context: Context) {
             recentActivity = recentActivity
         )
     }
-    
+
     private fun getLanguageColor(language: String): String {
         return when (language.lowercase()) {
             "javascript" -> "#f1e05a"
@@ -382,12 +382,12 @@ class ChronovaRepository(context: Context) {
             else -> "#6b7280"
         }
     }
-    
+
     private fun getProjectColor(project: String): String {
         val colors = arrayOf("#3B82F6", "#EF4444", "#10B981", "#F59E0B", "#8B5CF6", "#EC4899", "#06B6D4", "#84CC16")
         return colors[project.hashCode().rem(colors.size).let { if (it < 0) it + colors.size else it }]
     }
-    
+
     private fun getEditorColor(editor: String): String {
         return when (editor.lowercase()) {
             "vs code", "visual studio code" -> "#007acc"
@@ -403,7 +403,7 @@ class ChronovaRepository(context: Context) {
             else -> "#6b7280"
         }
     }
-    
+
     private fun formatTimestamp(timestamp: Double): String {
         val now = System.currentTimeMillis() / 1000.0
         val diff = (now - timestamp).toLong()
@@ -415,7 +415,7 @@ class ChronovaRepository(context: Context) {
             else -> "${diff / 86400}d ago"
         }
     }
-    
+
     private fun formatDateForDisplay(dateString: String): String {
         return try {
             // Parse the date string (e.g., "2025-09-02")
@@ -454,7 +454,7 @@ class ChronovaRepository(context: Context) {
 data class StatsRangeData(
     val totalSeconds: Long,
     val languages: Map<String, Long>,
-    val projects: Map<String, Long>, 
+    val projects: Map<String, Long>,
     val editors: Map<String, Long>,
     val dailyActivity: List<Pair<String, Float>>
 )
