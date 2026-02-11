@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Timeless-inspired color scheme -->
+    <color name="colorPrimary">#4f5b69</color>
+    <color name="colorPrimaryVariant">#29333a</color>
+    <color name="colorOnPrimary">@color/white</color>
+    <color name="colorSecondary">#00acac</color>
+    <color name="colorSecondaryVariant">#007979</color>
+    <color name="colorOnSecondary">@color/white</color>
+    
+    <!-- Legacy colors for compatibility -->
+    <color name="primary">#4f5b69</color>
+    <color name="primary_dark">#29333a</color>
+    <color name="secondary">#00acac</color>
+    <color name="secondary_dark">#007979</color>
+    <color name="white">#FFFFFF</color>
+    
+    <color name="background">#0F172A</color>
+    <color name="surface">#1E293B</color>
+    <color name="surface_variant">#334155</color>
+    
+    <color name="text_primary">#F8FAFC</color>
+    <color name="text_secondary">#CBD5E1</color>
+    <color name="text_hint">#94A3B8</color>
+    
+    <color name="error">#EF4444</color>
+    <color name="success">#10B981</color>
+    <color name="warning">#F59E0B</color>
+    
+    <color name="divider">#E2E8F0</color>
+</resources>

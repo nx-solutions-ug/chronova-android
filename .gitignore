@@ -1,0 +1,13 @@
+/build/**
+/app/build/**
+
+
+# In Memoria
+in-memoria-vectors.db/**
+in-memoria.db
+.in-memoria/cache/
+.in-memoria/.env
+
+# Gradle/idea
+.gradle/**
+.idea/**
