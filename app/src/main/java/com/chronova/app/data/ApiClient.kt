@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit
 
 object ApiClient {
 
-    private const val DEFAULT_BASE_URL = "https://app.chronova.dev/"
+    private const val DEFAULT_BASE_URL = "https://chronova.dev/"
     private var currentBaseUrl = DEFAULT_BASE_URL
     private var currentRetrofit: Retrofit? = null
 

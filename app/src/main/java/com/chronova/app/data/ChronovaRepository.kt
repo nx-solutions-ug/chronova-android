@@ -23,7 +23,7 @@ class ChronovaRepository(context: Context) {
     }
 
     fun getServerUrl(): String {
-        return prefs.getString("server_url", "https://app.chronova.dev/") ?: "https://app.chronova.dev/"
+        return prefs.getString("server_url", "https://chronova.dev/") ?: "https://chronova.dev/"
     }
 
     fun isValidUrl(url: String): Boolean {
@@ -82,8 +82,10 @@ class ChronovaRepository(context: Context) {
                     Result.failure(Exception("Empty response data - stats: ${stats != null}, heartbeats: ${heartbeats != null}"))
                 }
             } else {
-                val statsError = if (!statsResponse.isSuccessful) "Stats API failed: ${statsResponse.code()} - ${statsResponse.message()}" else ""
-                val heartbeatsError = if (!heartbeatsResponse.isSuccessful) "Heartbeats API failed: ${heartbeatsResponse.code()} - ${heartbeatsResponse.message()}" else ""
+                val statsError =
+                    if (!statsResponse.isSuccessful) "Stats API failed: ${statsResponse.code()} - ${statsResponse.message()}" else ""
+                val heartbeatsError =
+                    if (!heartbeatsResponse.isSuccessful) "Heartbeats API failed: ${heartbeatsResponse.code()} - ${heartbeatsResponse.message()}" else ""
                 Result.failure(Exception("API calls failed - $statsError $heartbeatsError"))
             }
         } catch (e: Exception) {
@@ -236,7 +238,7 @@ class ChronovaRepository(context: Context) {
                         org.subscriptionStatus?.let { status ->
                             org.subscriptionPlan?.let { plan ->
                                 status in listOf("active", "trialing", "past_due", "canceled") &&
-                                plan in listOf("org_team", "enterprise")
+                                        plan in listOf("org_team", "enterprise")
                             } ?: false
                         } ?: false
                     } ?: false
@@ -296,7 +298,10 @@ class ChronovaRepository(context: Context) {
     }
 
     // Transformation functions to convert WakaTime API data to Android UI format
-    private fun transformToDashboard(stats: WakaTimeStatsData, heartbeats: List<WakaTimeHeartbeatData>): DashboardResponse {
+    private fun transformToDashboard(
+        stats: WakaTimeStatsData,
+        heartbeats: List<WakaTimeHeartbeatData>
+    ): DashboardResponse {
         val totalSeconds = if (stats.totalSeconds > 0) stats.totalSeconds else 0.0
         val totalHours = totalSeconds / 3600.0
         val weeklyHours = totalSeconds / 3600.0 // This is already weekly data

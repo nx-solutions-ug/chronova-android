@@ -11,3 +11,6 @@ in-memoria.db
 # Gradle/idea
 .gradle/**
 .idea/**
+
+# Codebase Index
+.opencode/index/**
