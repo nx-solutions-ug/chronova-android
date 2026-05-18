@@ -7,7 +7,8 @@ name: opencode
 # NOTE: We install opencode CLI directly (pinned version) instead of using the
 # anomalyco/opencode/github composite action, because the composite action always
 # downloads the LATEST opencode binary regardless of the action tag. Latest builds
-# can be unstable and may break CI workflows without warning.
+# (v1.14.21+) have a broken symlink (AGENTS.md → README.md) that causes GitHub Actions
+# staging to fail with "InstanceRef not provided".
 
 on:
   issue_comment:
