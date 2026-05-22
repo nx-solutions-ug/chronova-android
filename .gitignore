@@ -14,3 +14,6 @@ in-memoria.db
 
 # Codebase Index
 .opencode/index/**
+
+.in-memoria
+.opencode
