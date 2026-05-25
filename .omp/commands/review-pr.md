@@ -1,4 +1,4 @@
-You MUST review PR $ARGUMENTS right now. Do NOT ask for more information — execute all steps immediately.
+You MUST review PR $ARGUMENTS right now. Do NOT ask for more information — execute all steps immediately. React with the 👀 to the triggering comment.
 
 ## Step 0: Dedup check
 
