@@ -124,6 +124,7 @@ No tests currently exist. Add them in:
 | API models | `app/src/main/java/com/chronova/app/data/ApiModels.kt` |
 | Activities | `app/src/main/java/com/chronova/app/*Activity.kt` |
 | Fragments | `app/src/main/java/com/chronova/app/ui/*Fragment.kt` |
+| Dialogs | `app/src/main/java/com/chronova/app/ui/*DialogFragment.kt` |
 | Adapters | `app/src/main/java/com/chronova/app/ui/*Adapter.kt` |
 | ViewHolders | `app/src/main/java/com/chronova/app/ui/main/cards/viewholders/` |
 | Layouts | `app/src/main/res/layout/` |
@@ -131,7 +132,7 @@ No tests currently exist. Add them in:
 
 ## 10. Adding a fragment with ViewPager
 
-Use `FragmentStateAdapter` and `TabLayoutMediator`:
+Use `FragmentStateAdapter` and `TabLayoutMediator`. For sub-tabs inside a bottom-nav destination, use a fragment-level ViewPager (see `ProjectsContainerFragment` and `InsightsPagerFragment`).
 
 ```kotlin
 class NewPagerFragment : Fragment(R.layout.fragment_new_pager) {

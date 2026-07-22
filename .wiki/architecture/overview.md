@@ -62,18 +62,26 @@ app/src/main/java/com/chronova/app/
     ├── FilesFragment.kt
     ├── LanguagesPagerFragment.kt
     ├── LanguagesStatsFragment.kt
+    ├── ProjectsContainerFragment.kt  # Projects + Editors sub-tabs
     ├── ProjectsPagerFragment.kt
     ├── ProjectsStatsFragment.kt
     ├── EditorsPagerFragment.kt
     ├── EditorsStatsFragment.kt
+    ├── GoalsFragment.kt
+    ├── CreateGoalDialogFragment.kt
+    ├── LeaderboardFragment.kt
+    ├── InsightsPagerFragment.kt
+    ├── AiInsightsFragment.kt
+    ├── FocusFragment.kt
     └── *Adapter.kt              # RecyclerView adapters
 ```
 
 ## Fragment patterns
 
-- **Pager fragment**: hosts `ViewPager2` + `TabLayout` with a `FragmentStateAdapter`. Used for dashboard (`MainPagerFragment`) and per-section drill-downs (`LanguagesPagerFragment`, `ProjectsPagerFragment`, `EditorsPagerFragment`).
+- **Pager fragment**: hosts `ViewPager2` + `TabLayout` with a `FragmentStateAdapter`. Used for the dashboard (`MainPagerFragment`), per-section drill-downs (`LanguagesPagerFragment`, `ProjectsPagerFragment`, `EditorsPagerFragment`), and PRO-gated insights (`InsightsPagerFragment`).
 - **Stats fragment**: one tab page inside a pager. It reads a `timeRange` argument created by `newInstance()` and loads data with `lifecycleScope`.
-- **List fragment**: a simple `RecyclerView` backed by a repository call, e.g. `FilesFragment`.
+- **Container fragment**: groups related sections under a single bottom-nav destination. `ProjectsContainerFragment` shows `ProjectsPagerFragment` and `EditorsPagerFragment` as sub-tabs.
+- **List fragment**: a simple `RecyclerView` backed by a repository call, e.g. `FilesFragment`, `GoalsFragment`, or `LeaderboardFragment`.
 
 ## Lifecycle rules
 

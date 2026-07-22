@@ -28,6 +28,7 @@ The data layer is responsible for all network communication, local persistence o
 |-----|---------|---------|
 | `api_key` | Bearer token for API calls | `null` |
 | `server_url` | Base URL of the Chronova server | `https://chronova.dev/` |
+| `user_id` | Current user ID, persisted at login for leaderboard highlighting | `null` |
 
 ### Public API
 
@@ -42,11 +43,18 @@ suspend fun getEditors(): Result<EditorResponse>
 suspend fun getStatsForRange(timeRange: String): Result<StatsRangeData>
 suspend fun checkProSubscription(): Result<Boolean>
 suspend fun getFileActivity(perPage: Int = 50): Result<List<FileActivity>>
+suspend fun getGoals(): Result<List<Goal>>
+suspend fun createGoal(request: GoalCreateRequest): Result<GoalResponse>
+suspend fun deleteGoal(goalId: String): Result<DeleteGoalResponse>
+suspend fun getGoalSuggestions(): Result<List<GoalSuggestion>>
+suspend fun getLeaders(range: String, language: String? = null, page: Int = 1): Result<LeadersResponse>
+suspend fun getAiAnalytics(range: String): Result<AiAnalyticsData>
+suspend fun getFocusAnalytics(range: String): Result<FocusAnalyticsData>
 ```
 
 ## API service
 
-Endpoints mirror a WakaTime-compatible Chronova API:
+Endpoints mirror a WakaTime-compatible Chronova API, with additional Chronova-specific endpoints for Goals, Leaderboard, and Analytics:
 
 ```kotlin
 @POST("api/auth/login")
@@ -69,6 +77,48 @@ suspend fun getHeartbeats(
 
 @GET("api/v1/users/current/projects")
 suspend fun getProjects(@Header("Authorization") authorization: String): Response<WakaTimeProjectsResponse>
+
+// Goals
+@GET("api/v1/users/current/goals")
+suspend fun getGoals(@Header("Authorization") authorization: String): Response<GoalsResponse>
+
+@POST("api/v1/users/current/goals")
+suspend fun createGoal(
+    @Header("Authorization") authorization: String,
+    @Body request: GoalCreateRequest
+): Response<GoalResponse>
+
+@DELETE("api/v1/users/current/goals")
+suspend fun deleteGoal(
+    @Header("Authorization") authorization: String,
+    @Query("id") goalId: String
+): Response<DeleteGoalResponse>
+
+@GET("api/v1/users/current/goals/suggestions")
+suspend fun getGoalSuggestions(@Header("Authorization") authorization: String): Response<GoalSuggestionsResponse>
+
+// Leaderboard
+@GET("api/v1/leaders")
+suspend fun getLeaders(
+    @Header("Authorization") authorization: String,
+    @Query("range") range: String = "last_7_days",
+    @Query("language") language: String? = null,
+    @Query("page") page: Int = 1
+): Response<LeadersResponse>
+
+// AI Insights
+@GET("api/v1/users/current/analytics/ai")
+suspend fun getAiAnalytics(
+    @Header("Authorization") authorization: String,
+    @Query("range") range: String = "last_7_days"
+): Response<AiAnalyticsResponse>
+
+// Focus Analytics
+@GET("api/v1/users/current/analytics/focus")
+suspend fun getFocusAnalytics(
+    @Header("Authorization") authorization: String,
+    @Query("range") range: String = "last_7_days"
+): Response<FocusAnalyticsResponse>
 ```
 
 The authorization header is formatted as `Bearer $apiKey` inside the repository.
@@ -106,3 +156,13 @@ suspend fun getNewData(): Result<NewData> = try {
 - Network/parse exception → wrapped in `Result.failure(e)`.
 
 UI callers should handle both branches with `Result.fold(onSuccess, onFailure)`.
+
+## Feature models
+
+Goals, Leaderboard, AI Insights, and Focus Analytics add roughly 20 DTOs to `ApiModels.kt`. Notable models:
+
+- `Goal`, `GoalCreateRequest`, `GoalResponse`, `GoalSuggestion` — goal CRUD and suggestions.
+- `LeadersResponse`, `LeaderEntry`, `LeaderUser` — ranked users with current-user handling.
+- `AiAnalyticsData`, `AiContributionShare`, `AiAdoptionPoint`, `AiEfficiencyTrendPoint`, `LanguageAiMatrixEntry`, `ProjectAiDependencyEntry` — AI adoption and contribution metrics.
+- `FocusAnalyticsData`, `ContextSwitches`, `DeepWorkBlocks`, `ProjectDistribution` — focus metrics.
+
