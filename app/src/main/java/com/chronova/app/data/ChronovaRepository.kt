@@ -235,6 +235,10 @@ class ChronovaRepository(context: Context) {
                 if (userData != null) {
                     // Store user ID for leaderboard highlighting
                     prefs.edit().putString("user_id", userData.id).apply()
+                    // Check proComped first — matches backend hasProAccess() priority
+                    val isProComped = userData.isProComped == true
+
+                    // Check individual Pro subscription
                     val hasIndividualPro = userData.subscriptionStatus?.let { status ->
                         userData.subscriptionPlan?.let { plan ->
                             status in listOf("active", "trialing", "past_due", "canceled") && plan == "pro"
@@ -251,7 +255,7 @@ class ChronovaRepository(context: Context) {
                         } ?: false
                     } ?: false
 
-                    Result.success(hasIndividualPro || hasOrgPro)
+                    Result.success(isProComped || hasIndividualPro || hasOrgPro)
                 } else {
                     Result.failure(Exception("Empty response data"))
                 }

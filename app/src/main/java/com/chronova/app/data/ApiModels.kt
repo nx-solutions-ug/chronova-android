@@ -154,6 +154,8 @@ data class UserData(
     val subscriptionStatus: String?,
     @SerializedName("subscriptionPlan")
     val subscriptionPlan: String?,
+    @SerializedName("isProComped")
+    val isProComped: Boolean? = null,
     @SerializedName("organizationSubscriptions")
     val organizationSubscriptions: List<OrganizationSubscriptionData>?
 )
