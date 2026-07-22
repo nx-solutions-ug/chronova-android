@@ -9,7 +9,7 @@ tags: [build, gradle, docker, release]
 
 ## Build environment
 
-- **Gradle**: 8.13.2
+- **Gradle**: 9.2.1 (wrapper)
 - **Android Gradle Plugin**: 8.13.2
 - **Kotlin**: 2.1.20
 - **Compile / Target SDK**: 36
@@ -99,6 +99,17 @@ This removes the root `buildDir`.
 |------|-----------------|---------|-------|
 | `debug` | — | default debug key | Incremental compilation disabled (`enableIncrementalCompilation = false`). |
 | `release` | `false` | `signingConfigs.release` | Uses committed release keystore; no ProGuard/R8 minification. |
+
+> Note: `settings.gradle` disables the local Gradle build cache and sets `RepositoriesMode.FAIL_ON_PROJECT_REPOS`; all dependencies must be declared in `settings.gradle`.
+
+## Continuous integration
+
+`.github/workflows/build.yml` runs on `workflow_dispatch` and executes:
+
+1. `./gradlew testDebugUnitTest`
+2. `./gradlew assembleDebug`
+3. `./gradlew assembleRelease`
+4. Uploads debug APK (7-day retention), release APK (30-day retention), and test reports.
 
 ## Troubleshooting
 

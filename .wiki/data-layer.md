@@ -42,7 +42,22 @@ suspend fun getEditors(): Result<EditorResponse>
 suspend fun getStatsForRange(timeRange: String): Result<StatsRangeData>
 suspend fun checkProSubscription(): Result<Boolean>
 suspend fun getFileActivity(perPage: Int = 50): Result<List<FileActivity>>
+suspend fun getGoals(): Result<List<Goal>>
+suspend fun createGoal(request: GoalCreateRequest): Result<GoalResponse>
+suspend fun deleteGoal(goalId: String): Result<DeleteGoalResponse>
+suspend fun getGoalSuggestions(): Result<List<GoalSuggestion>>
+suspend fun getLeaders(range: String, language: String?, page: Int): Result<LeadersResponse>
+suspend fun getAiAnalytics(range: String): Result<AiAnalyticsData>
+suspend fun getFocusAnalytics(range: String): Result<FocusAnalyticsData>
 ```
+
+### PRO subscription check
+
+`checkProSubscription()` calls `api/v1/users/current` and returns `true` if any of the following holds (checked in this order):
+
+1. `UserData.isProComped == true` — short-circuits to `true` and matches the backend's `hasProAccess()` priority.
+2. The user's individual subscription is active/trialing/past-due/canceled **and** the plan is `"pro"`.
+3. Any organization subscription is active/trialing/past-due/canceled **and** the plan is `"org_team"` or `"enterprise"`.
 
 ## API service
 
@@ -69,6 +84,27 @@ suspend fun getHeartbeats(
 
 @GET("api/v1/users/current/projects")
 suspend fun getProjects(@Header("Authorization") authorization: String): Response<WakaTimeProjectsResponse>
+
+// Goals
+@GET("api/v1/users/current/goals")
+suspend fun getGoals(@Header("Authorization") authorization: String): Response<GoalsResponse>
+
+@POST("api/v1/users/current/goals")
+suspend fun createGoal(...): Response<GoalResponse>
+
+@DELETE("api/v1/users/current/goals")
+suspend fun deleteGoal(...): Response<DeleteGoalResponse>
+
+// Leaderboard
+@GET("api/v1/leaders")
+suspend fun getLeaders(...): Response<LeadersResponse>
+
+// Insights (PRO)
+@GET("api/v1/users/current/analytics/ai")
+suspend fun getAiAnalytics(...): Response<AiAnalyticsResponse>
+
+@GET("api/v1/users/current/analytics/focus")
+suspend fun getFocusAnalytics(...): Response<FocusAnalyticsResponse>
 ```
 
 The authorization header is formatted as `Bearer $apiKey` inside the repository.

@@ -46,7 +46,7 @@ Chronova Android uses a **custom MVVM + Repository Pattern**. It deliberately av
 
 ```
 app/src/main/java/com/chronova/app/
-├── MainActivity.kt              # Launcher, bottom nav, toolbar, logout
+├── MainActivity.kt              # Launcher, bottom nav, PRO status, toolbar, logout
 ├── LoginActivity.kt             # Login or API-key authentication
 ├── data/
 │   ├── ApiClient.kt             # Retrofit singleton
@@ -58,6 +58,12 @@ app/src/main/java/com/chronova/app/
     │   ├── MainPagerFragment.kt
     │   ├── MainStatsFragment.kt
     │   └── cards/               # Dashboard card adapter + view holders
+    ├── ProjectsContainerFragment.kt
+    ├── GoalsFragment.kt
+    ├── LeaderboardFragment.kt
+    ├── InsightsPagerFragment.kt
+    ├── AiInsightsFragment.kt
+    ├── FocusFragment.kt
     ├── DashboardFragment.kt
     ├── FilesFragment.kt
     ├── LanguagesPagerFragment.kt
@@ -66,7 +72,8 @@ app/src/main/java/com/chronova/app/
     ├── ProjectsStatsFragment.kt
     ├── EditorsPagerFragment.kt
     ├── EditorsStatsFragment.kt
-    └── *Adapter.kt              # RecyclerView adapters
+    ├── *Adapter.kt              # RecyclerView adapters
+    └── CreateGoalDialogFragment.kt
 ```
 
 ## Fragment patterns
