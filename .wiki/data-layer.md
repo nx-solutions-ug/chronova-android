@@ -42,7 +42,37 @@ suspend fun getEditors(): Result<EditorResponse>
 suspend fun getStatsForRange(timeRange: String): Result<StatsRangeData>
 suspend fun checkProSubscription(): Result<Boolean>
 suspend fun getFileActivity(perPage: Int = 50): Result<List<FileActivity>>
+suspend fun getGoals(): Result<List<Goal>>
+suspend fun createGoal(request: GoalCreateRequest): Result<GoalResponse>
+suspend fun deleteGoal(goalId: String): Result<DeleteGoalResponse>
+suspend fun getGoalSuggestions(): Result<List<GoalSuggestion>>
+suspend fun getLeaders(range: String, language: String? = null, page: Int = 1): Result<LeadersResponse>
+suspend fun getAiAnalytics(range: String): Result<AiAnalyticsData>
+suspend fun getFocusAnalytics(range: String): Result<FocusAnalyticsData>
 ```
+
+## PRO status
+
+`ChronovaRepository.checkProSubscription()` calls `GET /api/v1/users/current` and returns the value of `UserData.hasPremiumFeatures` (serialized from the backend field `has_premium_features`). The app no longer reconstructs Pro access from `subscriptionStatus`/`subscriptionPlan` locally; it trusts the backend's pre-computed flag, which already accounts for individual subscriptions, organization subscriptions, and comped Pro access.
+
+The relevant part of `UserData` now includes both the legacy fields and the new backend-computed gate:
+
+```kotlin
+data class UserData(
+    @SerializedName("subscriptionStatus")
+    val subscriptionStatus: String?,
+    @SerializedName("subscriptionPlan")
+    val subscriptionPlan: String?,
+    @SerializedName("isProComped")
+    val isProComped: Boolean? = null,
+    @SerializedName("has_premium_features")
+    val hasPremiumFeatures: Boolean? = null,
+    @SerializedName("organizationSubscriptions")
+    val organizationSubscriptions: List<OrganizationSubscriptionData>?
+)
+```
+
+When `hasPremiumFeatures == true`, `MainActivity` enables the extended time-range tabs and shows the "⭐ PRO" toolbar badge.
 
 ## API service
 
@@ -72,6 +102,20 @@ suspend fun getProjects(@Header("Authorization") authorization: String): Respons
 ```
 
 The authorization header is formatted as `Bearer $apiKey` inside the repository.
+
+## Additional endpoints
+
+Beyond the WakaTime-shaped core, the repository wraps endpoints for goals, leaderboard, AI analytics, and focus analytics. These are declared in `ChronovaApiService.kt` and return `Result<T>` from `ChronovaRepository`:
+
+```kotlin
+suspend fun getGoals(): Result<List<Goal>>
+suspend fun createGoal(request: GoalCreateRequest): Result<GoalResponse>
+suspend fun deleteGoal(goalId: String): Result<DeleteGoalResponse>
+suspend fun getGoalSuggestions(): Result<List<GoalSuggestion>>
+suspend fun getLeaders(range: String, language: String? = null, page: Int = 1): Result<LeadersResponse>
+suspend fun getAiAnalytics(range: String): Result<AiAnalyticsData>
+suspend fun getFocusAnalytics(range: String): Result<FocusAnalyticsData>
+```
 
 ## Dynamic base URL
 

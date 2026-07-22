@@ -9,7 +9,7 @@ tags: [build, gradle, docker, release]
 
 ## Build environment
 
-- **Gradle**: 8.13.2
+- **Gradle wrapper**: 9.2.1
 - **Android Gradle Plugin**: 8.13.2
 - **Kotlin**: 2.1.20
 - **Compile / Target SDK**: 36
@@ -92,6 +92,10 @@ The Dockerfile uses:
 ```
 
 This removes the root `buildDir`.
+
+## Version
+
+Current release version is **1.1.1** (`versionCode 3`) as declared in `app/build.gradle`.
 
 ## Build flavors / types
 

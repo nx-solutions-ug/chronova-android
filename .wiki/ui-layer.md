@@ -15,8 +15,8 @@ The UI layer follows a custom MVVM pattern: fragments own their state, use `life
 
 - **Launcher activity** declared in `AndroidManifest.xml`.
 - Redirects to `LoginActivity` if the user is not authenticated.
-- Checks the PRO subscription status with `repository.checkProSubscription()` and appends `" ⭐ PRO"` to the toolbar title when true.
-- Hosts a bottom navigation bar with `Dashboard` and `Files` items.
+- Checks the PRO subscription status with `repository.checkProSubscription()` and appends `" ⭐ PRO"` to the toolbar title when true. The Pro gate uses the backend's pre-computed `has_premium_features` flag from `GET /api/v1/users/current`, so comped and organization Pro access is handled the same as a paid subscription.
+- Hosts a bottom navigation bar with `Dashboard`, `Projects`, `Goals`, `Leaderboard`, and `Insights` items.
 - Toolbar menu provides **Logout**, which clears the API key and returns to `LoginActivity`.
 
 ### `LoginActivity`
@@ -38,7 +38,6 @@ The UI layer follows a custom MVVM pattern: fragments own their state, use `life
   - global summary card,
   - pie charts for languages/projects/editors,
   - line chart for daily activity.
-- `DashboardFragment` is a separate older dashboard with a bar chart and recent activity list. It is not currently wired to bottom navigation.
 
 ### Drill-down sections
 
@@ -47,12 +46,27 @@ The UI layer follows a custom MVVM pattern: fragments own their state, use `life
 | `LanguagesPagerFragment` | `LanguagesStatsFragment` | Languages only |
 | `ProjectsPagerFragment` | `ProjectsStatsFragment` | Projects only |
 | `EditorsPagerFragment` | `EditorsStatsFragment` | Editors only |
+| `InsightsPagerFragment` | `AiInsightsFragment` / `FocusFragment` | AI analytics and focus analytics |
 
-Each pager provides **Today / Last 7 Days / Last 30 Days** tabs.
+Most drill-down pagers provide **Today / Last 7 Days / Last 30 Days** tabs. `InsightsPagerFragment` is also gated by PRO status.
 
 ### Files
 
-`FilesFragment` lists recent file activity derived from heartbeats, grouped by file path and time spent.
+`FilesFragment` lists recent file activity derived from heartbeats, grouped by file path and time spent. It is not currently wired to bottom navigation.
+
+### Goals
+
+`GoalsFragment` displays active coding goals; `CreateGoalDialogFragment` adds new ones. Data comes from `repository.getGoals()` / `repository.createGoal()` / `repository.deleteGoal()`.
+
+### Leaderboard
+
+`LeaderboardFragment` shows ranked users for a selected range and optional language filter.
+
+### Insights
+
+- `InsightsPagerFragment` hosts AI and focus analytics tabs.
+- `AiInsightsFragment` renders AI-generated coding insights.
+- `FocusFragment` shows focus-score and distraction analytics.
 
 ## Card dashboard
 
@@ -69,6 +83,14 @@ Charts are rendered with [MPAndroidChart](https://github.com/PhilJay/MPAndroidCh
 - **Pie charts** for language/project/editor distribution.
 - **Line charts** for daily activity trends.
 - **Bar charts** in `DashboardFragment`.
+
+## PRO gating
+
+`MainActivity` stores a boolean `isProUser` after `checkProSubscription()` and passes it to fragments that need it:
+
+- `MainPagerFragment` — free users get 2 dashboard tabs; PRO users get 6.
+- `InsightsPagerFragment` — shows a locked state for free users, AI + Focus tabs for PRO users.
+- `LeaderboardFragment` — receives the flag (future use).
 
 ## Navigation
 
