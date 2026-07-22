@@ -40,7 +40,11 @@ class ChronovaRepository(context: Context) {
     }
 
     fun clearAuth() {
-        prefs.edit().remove("api_key").apply()
+        prefs.edit().remove("api_key").remove("user_id").apply()
+    }
+
+    fun getUserId(): String? {
+        return prefs.getString("user_id", null)
     }
 
     fun isAuthenticated(): Boolean {
@@ -55,6 +59,9 @@ class ChronovaRepository(context: Context) {
         return try {
             val response = apiService.login(LoginRequest(email, password))
             if (response.isSuccessful && response.body() != null) {
+                response.body()?.user?.let { user ->
+                    prefs.edit().putString("user_id", user.id).apply()
+                }
                 Result.success(response.body()!!)
             } else {
                 Result.failure(Exception("Login failed: ${response.message()}"))
@@ -226,7 +233,8 @@ class ChronovaRepository(context: Context) {
             if (response.isSuccessful && response.body() != null) {
                 val userData = response.body()?.data
                 if (userData != null) {
-                    // Check individual subscription
+                    // Store user ID for leaderboard highlighting
+                    prefs.edit().putString("user_id", userData.id).apply()
                     val hasIndividualPro = userData.subscriptionStatus?.let { status ->
                         userData.subscriptionPlan?.let { plan ->
                             status in listOf("active", "trialing", "past_due", "canceled") && plan == "pro"
@@ -291,6 +299,112 @@ class ChronovaRepository(context: Context) {
                 Result.success(fileActivities)
             } else {
                 Result.failure(Exception("Failed to get file activity: ${response.code()} - ${response.message()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    // ==================== Goals ====================
+
+    suspend fun getGoals(): Result<List<Goal>> {
+        val authHeader = getAuthHeader() ?: return Result.failure(Exception("Not authenticated"))
+        return try {
+            val response = apiService.getGoals(authHeader)
+            if (response.isSuccessful && response.body() != null) {
+                Result.success(response.body()!!.data)
+            } else {
+                Result.failure(Exception("Failed to get goals: ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun createGoal(request: GoalCreateRequest): Result<GoalResponse> {
+        val authHeader = getAuthHeader() ?: return Result.failure(Exception("Not authenticated"))
+        return try {
+            val response = apiService.createGoal(authHeader, request)
+            if (response.isSuccessful && response.body() != null) {
+                Result.success(response.body()!!)
+            } else {
+                Result.failure(Exception("Failed to create goal: ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun deleteGoal(goalId: String): Result<DeleteGoalResponse> {
+        val authHeader = getAuthHeader() ?: return Result.failure(Exception("Not authenticated"))
+        return try {
+            val response = apiService.deleteGoal(authHeader, goalId)
+            if (response.isSuccessful && response.body() != null) {
+                Result.success(response.body()!!)
+            } else {
+                Result.failure(Exception("Failed to delete goal: ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun getGoalSuggestions(): Result<List<GoalSuggestion>> {
+        val authHeader = getAuthHeader() ?: return Result.failure(Exception("Not authenticated"))
+        return try {
+            val response = apiService.getGoalSuggestions(authHeader)
+            if (response.isSuccessful && response.body() != null) {
+                Result.success(response.body()!!.data)
+            } else {
+                Result.failure(Exception("Failed to get goal suggestions: ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    // ==================== Leaderboard ====================
+
+    suspend fun getLeaders(range: String, language: String? = null, page: Int = 1): Result<LeadersResponse> {
+        val authHeader = getAuthHeader() ?: return Result.failure(Exception("Not authenticated"))
+        return try {
+            val response = apiService.getLeaders(authHeader, range, language, page)
+            if (response.isSuccessful && response.body() != null) {
+                Result.success(response.body()!!)
+            } else {
+                Result.failure(Exception("Failed to get leaderboard: ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    // ==================== AI Analytics ====================
+
+    suspend fun getAiAnalytics(range: String): Result<AiAnalyticsData> {
+        val authHeader = getAuthHeader() ?: return Result.failure(Exception("Not authenticated"))
+        return try {
+            val response = apiService.getAiAnalytics(authHeader, range)
+            if (response.isSuccessful && response.body() != null) {
+                Result.success(response.body()!!.data)
+            } else {
+                Result.failure(Exception("Failed to get AI analytics: ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    // ==================== Focus Analytics ====================
+
+    suspend fun getFocusAnalytics(range: String): Result<FocusAnalyticsData> {
+        val authHeader = getAuthHeader() ?: return Result.failure(Exception("Not authenticated"))
+        return try {
+            val response = apiService.getFocusAnalytics(authHeader, range)
+            if (response.isSuccessful && response.body() != null) {
+                Result.success(response.body()!!.data)
+            } else {
+                Result.failure(Exception("Failed to get focus analytics: ${response.code()}"))
             }
         } catch (e: Exception) {
             Result.failure(e)

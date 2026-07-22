@@ -15,8 +15,10 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.chronova.app.data.ApiClient
 import com.chronova.app.data.ChronovaRepository
 import com.chronova.app.databinding.ActivityMainBinding
-import com.chronova.app.ui.DashboardFragment
-import com.chronova.app.ui.FilesFragment
+import com.chronova.app.ui.ProjectsContainerFragment
+import com.chronova.app.ui.GoalsFragment
+import com.chronova.app.ui.LeaderboardFragment
+import com.chronova.app.ui.InsightsPagerFragment
 import com.chronova.app.ui.main.MainPagerFragment
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.launch
@@ -67,18 +69,37 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_dashboard -> {
-                    val mainPagerFragment = MainPagerFragment().apply {
-                        arguments = Bundle().apply {
-                            putBoolean("is_pro_user", isProUser)
-                        }
+                    val frag = MainPagerFragment().apply {
+                        arguments = Bundle().apply { putBoolean("is_pro_user", isProUser) }
                     }
-                    replaceFragment(mainPagerFragment)
+                    replaceFragment(frag)
                     updateTitleWithProBadge("Dashboard")
                     true
                 }
-                R.id.nav_languages -> {
-                    replaceFragment(FilesFragment())
-                    supportActionBar?.title = "Files"
+                R.id.nav_projects -> {
+                    replaceFragment(ProjectsContainerFragment())
+                    updateTitleWithProBadge("Projects")
+                    true
+                }
+                R.id.nav_goals -> {
+                    replaceFragment(GoalsFragment())
+                    updateTitleWithProBadge("Goals")
+                    true
+                }
+                R.id.nav_leaderboard -> {
+                    val frag = LeaderboardFragment().apply {
+                        arguments = Bundle().apply { putBoolean("is_pro_user", isProUser) }
+                    }
+                    replaceFragment(frag)
+                    updateTitleWithProBadge("Leaderboard")
+                    true
+                }
+                R.id.nav_insights -> {
+                    val frag = InsightsPagerFragment().apply {
+                        arguments = Bundle().apply { putBoolean("is_pro_user", isProUser) }
+                    }
+                    replaceFragment(frag)
+                    updateTitleWithProBadge("Insights")
                     true
                 }
                 else -> false
