@@ -9,13 +9,19 @@ tags: [build, gradle, docker, release]
 
 ## Build environment
 
-- **Gradle**: 8.13.2
+- **Gradle**: 9.2.1 (wrapper distribution URL in `gradle/wrapper/gradle-wrapper.properties`)
 - **Android Gradle Plugin**: 8.13.2
 - **Kotlin**: 2.1.20
 - **Compile / Target SDK**: 36
 - **Min SDK**: 24
 - **JVM target**: 17
 - **Build tool**: command line Gradle or Android Studio Ladybug+
+
+## Gradle configuration
+
+- **Build cache**: disabled globally (`org.gradle.caching=false`) and in `settings.gradle` (`buildCache { local { enabled = false } }`) to ensure fresh builds.
+- **Repository mode**: `FAIL_ON_PROJECT_REPOS` — all dependencies must be declared in `settings.gradle`.
+- **JitPack**: required for MPAndroidChart (`maven { url = 'https://jitpack.io' }`).
 
 ## Debug build
 
@@ -64,6 +70,23 @@ signingConfigs {
 
 > The keystore is checked into the repository for convenience in this project. For production apps, store credentials outside source control.
 
+## Build helper scripts
+
+### `build.sh`
+
+```bash
+./build.sh         # Debug build → ../public/downloads/chronova-debug.apk
+./build.sh release # Release build → ../public/downloads/chronova-release.apk
+```
+
+The script:
+1. Verifies it is run from the repository root.
+2. Makes `gradlew` executable.
+3. Runs `./gradlew clean`.
+4. Builds the requested variant.
+5. Copies the resulting APK to `../public/downloads/chronova-<variant>.apk`.
+6. Prints the APK size and install instructions.
+
 ## Docker build
 
 A self-contained Docker image downloads the Android SDK and builds the debug APK.
@@ -97,7 +120,7 @@ This removes the root `buildDir`.
 
 | Type | `minifyEnabled` | Signing | Notes |
 |------|-----------------|---------|-------|
-| `debug` | — | default debug key | Incremental compilation disabled (`enableIncrementalCompilation = false`). |
+| `debug` | — | default debug key | `enableIncrementalCompilation = false` to avoid stale incremental artifacts. |
 | `release` | `false` | `signingConfigs.release` | Uses committed release keystore; no ProGuard/R8 minification. |
 
 ## Troubleshooting

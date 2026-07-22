@@ -58,6 +58,10 @@ app/src/main/java/com/chronova/app/
     │   ├── MainPagerFragment.kt
     │   ├── MainStatsFragment.kt
     │   └── cards/               # Dashboard card adapter + view holders
+    │       └── viewholders/
+    │           ├── GlobalSummaryViewHolder.kt
+    │           ├── LineChartViewHolder.kt
+    │           └── PieChartViewHolder.kt
     ├── DashboardFragment.kt
     ├── FilesFragment.kt
     ├── LanguagesPagerFragment.kt

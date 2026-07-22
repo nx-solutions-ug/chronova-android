@@ -54,10 +54,19 @@ lifecycleScope.launch {
 }
 ```
 
-Cancel long-running jobs in `onDestroyView()`:
+Cancel long-running jobs in `onDestroyView()` and set the reference to `null`:
 
 ```kotlin
 private var loadDataJob: Job? = null
+
+override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
+    loadDataJob = lifecycleScope.launch {
+        repository.getDashboard()
+            .onSuccess { data -> /* update UI */ }
+            .onFailure { error -> /* show error */ }
+    }
+}
 
 override fun onDestroyView() {
     super.onDestroyView()
@@ -84,7 +93,27 @@ suspend fun getNewData(): Result<NewData> = try {
 
 This is required in every fragment. The leaked binding reference is a common source of crashes after `onDestroyView()`.
 
-## 5. Repository access without DI
+## 5. Guard UI updates before touching `_binding`
+
+Fragments are often destroyed while an asynchronous call is in flight. Check `isAdded && _binding != null` before updating views to avoid `IllegalStateException` and null-binding crashes.
+
+```kotlin
+lifecycleScope.launch {
+    repository.getDashboard()
+        .onSuccess { data ->
+            if (isAdded && _binding != null) {
+                binding.title.text = data.title
+            }
+        }
+        .onFailure { error ->
+            if (isAdded && _binding != null) {
+                Toast.makeText(context, error.message, Toast.LENGTH_SHORT).show()
+            }
+        }
+}
+```
+
+## 6. Repository access without DI
 
 No Hilt, Koin, or manual service locator. Instantiate directly:
 
@@ -92,7 +121,7 @@ No Hilt, Koin, or manual service locator. Instantiate directly:
 private val repository = ChronovaRepository(requireContext())
 ```
 
-## 6. Fragment factory pattern
+## 7. Fragment factory pattern
 
 Pass arguments through `Bundle` using a `newInstance` companion function:
 
@@ -104,18 +133,18 @@ companion object {
 }
 ```
 
-## 7. No unsafe casts or suppression
+## 8. No unsafe casts or suppression
 
 Never use Kotlin unsafe casts, `@Suppress("...")` shortcuts, or type-script-style `as any` equivalents to bypass type safety.
 
-## 8. Tests
+## 9. Tests
 
 No tests currently exist. Add them in:
 
 - `app/src/test/` — unit tests (JUnit 4 is on the classpath).
 - `app/src/androidTest/` — instrumented tests (Espresso is on the classpath).
 
-## 9. File locations
+## 10. File locations
 
 | Purpose | Location |
 |---------|----------|
@@ -129,7 +158,7 @@ No tests currently exist. Add them in:
 | Layouts | `app/src/main/res/layout/` |
 | Drawables | `app/src/main/res/drawable/` |
 
-## 10. Adding a fragment with ViewPager
+## 11. Adding a fragment with ViewPager
 
 Use `FragmentStateAdapter` and `TabLayoutMediator`:
 
@@ -158,3 +187,13 @@ class NewPagerFragment : Fragment(R.layout.fragment_new_pager) {
 ```
 
 For the shorter agent quick-reference, see [`AGENTS.md`](../AGENTS.md).
+
+## Summary of critical rules
+
+1. Always use ViewBinding — never `findViewById`.
+2. Always use `lifecycleScope` for coroutines in Fragments/Activities.
+3. Always return `Result<T>` from Repository methods.
+4. Always clear `_binding` in `onDestroyView()`.
+5. Guard UI updates with `isAdded && _binding != null`.
+6. Cancel jobs in `onDestroyView()` (e.g., `loadDataJob?.cancel()`).
+7. Repository access via direct instantiation — no DI framework.
