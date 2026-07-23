@@ -60,6 +60,10 @@ If you prefer a containerized build:
 
 This builds `chronova-android-builder` from `Dockerfile.build`, runs `./gradlew assembleDebug`, and writes the APK to `build-output/apk/debug/app-debug.apk`.
 
+## Signing credentials
+
+The release keystore and passwords are committed to the repository for convenience. Do not reuse these credentials for a production release.
+
 ## Next steps
 
 - Read [Architecture Overview](./architecture/overview.md) to understand the layers.

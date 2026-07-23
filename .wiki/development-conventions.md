@@ -128,6 +128,7 @@ No tests currently exist. Add them in:
 | ViewHolders | `app/src/main/java/com/chronova/app/ui/main/cards/viewholders/` |
 | Layouts | `app/src/main/res/layout/` |
 | Drawables | `app/src/main/res/drawable/` |
+| Bottom navigation menu | `app/src/main/res/menu/bottom_navigation.xml` |
 
 ## 10. Adding a fragment with ViewPager
 

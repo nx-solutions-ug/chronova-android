@@ -9,7 +9,7 @@ tags: [build, gradle, docker, release]
 
 ## Build environment
 
-- **Gradle**: 8.13.2
+- **Gradle**: 9.2.1 (wrapper)
 - **Android Gradle Plugin**: 8.13.2
 - **Kotlin**: 2.1.20
 - **Compile / Target SDK**: 36
@@ -62,7 +62,7 @@ signingConfigs {
 }
 ```
 
-> The keystore is checked into the repository for convenience in this project. For production apps, store credentials outside source control.
+> The keystore and hardcoded credentials are checked into the repository for convenience in this project. For production apps, store credentials outside source control.
 
 ## Docker build
 

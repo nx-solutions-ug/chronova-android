@@ -16,7 +16,7 @@ The UI layer follows a custom MVVM pattern: fragments own their state, use `life
 - **Launcher activity** declared in `AndroidManifest.xml`.
 - Redirects to `LoginActivity` if the user is not authenticated.
 - Checks the PRO subscription status with `repository.checkProSubscription()` and appends `" ⭐ PRO"` to the toolbar title when true.
-- Hosts a bottom navigation bar with `Dashboard` and `Files` items.
+- Hosts a bottom navigation bar with **Dashboard**, **Projects**, **Goals**, **Leaderboard**, and **Insights** items.
 - Toolbar menu provides **Logout**, which clears the API key and returns to `LoginActivity`.
 
 ### `LoginActivity`
@@ -50,9 +50,28 @@ The UI layer follows a custom MVVM pattern: fragments own their state, use `life
 
 Each pager provides **Today / Last 7 Days / Last 30 Days** tabs.
 
-### Files
+### Projects container
 
-`FilesFragment` lists recent file activity derived from heartbeats, grouped by file path and time spent.
+`ProjectsContainerFragment` hosts a two-tab pager that combines `ProjectsPagerFragment` and `EditorsPagerFragment` under a single bottom-navigation destination.
+
+### Goals
+
+`GoalsFragment` lists user goals, supports swipe-to-delete, and shows a FAB that opens `CreateGoalDialogFragment` to add a new goal.
+
+### Leaderboard
+
+`LeaderboardFragment` shows ranked users. Free users see only the **7 Days** range; PRO users can switch between **7 Days**, **30 Days**, and **90 Days**. The current user's entry is pinned at the top when it is not on the first page.
+
+### AI Insights and Focus
+
+`InsightsPagerFragment` is gated to PRO users only. Non-PRO users see a locked state. PRO users see two tabs:
+
+- `AiInsightsFragment` — AI analytics with selectable ranges.
+- `FocusFragment` — focus analytics.
+
+### Dashboard legacy fragment
+
+`DashboardFragment` is a standalone older dashboard with a bar chart and recent activity list. It is not wired to bottom navigation and exists as a separate implementation from the card-based `MainStatsFragment` dashboard.
 
 ## Card dashboard
 
@@ -74,7 +93,7 @@ Charts are rendered with [MPAndroidChart](https://github.com/PhilJay/MPAndroidCh
 
 - Bottom navigation XML: `app/src/main/res/menu/bottom_navigation.xml`.
 - Main toolbar menu: `app/src/main/res/menu/main_menu.xml`.
-- There is currently no AndroidX Navigation component graph; navigation is done imperatively with `FragmentManager.beginTransaction().replace(...)`.
+- Navigation is done imperatively with `FragmentManager.beginTransaction().replace(...)`; there is no AndroidX Navigation component graph.
 
 ## Mandatory ViewBinding pattern
 
