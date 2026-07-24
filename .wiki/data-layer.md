@@ -42,6 +42,13 @@ suspend fun getEditors(): Result<EditorResponse>
 suspend fun getStatsForRange(timeRange: String): Result<StatsRangeData>
 suspend fun checkProSubscription(): Result<Boolean>
 suspend fun getFileActivity(perPage: Int = 50): Result<List<FileActivity>>
+suspend fun getGoals(): Result<List<Goal>>
+suspend fun createGoal(request: GoalCreateRequest): Result<GoalResponse>
+suspend fun deleteGoal(goalId: String): Result<DeleteGoalResponse>
+suspend fun getGoalSuggestions(): Result<List<GoalSuggestion>>
+suspend fun getLeaders(range: String, language: String? = null, page: Int = 1): Result<LeadersResponse>
+suspend fun getAiAnalytics(range: String): Result<AiAnalyticsData>
+suspend fun getFocusAnalytics(range: String): Result<FocusAnalyticsData>
 ```
 
 ## API service
@@ -69,6 +76,48 @@ suspend fun getHeartbeats(
 
 @GET("api/v1/users/current/projects")
 suspend fun getProjects(@Header("Authorization") authorization: String): Response<WakaTimeProjectsResponse>
+
+// Goals
+@GET("api/v1/users/current/goals")
+suspend fun getGoals(@Header("Authorization") authorization: String): Response<GoalsResponse>
+
+@POST("api/v1/users/current/goals")
+suspend fun createGoal(
+    @Header("Authorization") authorization: String,
+    @Body request: GoalCreateRequest
+): Response<GoalResponse>
+
+@DELETE("api/v1/users/current/goals")
+suspend fun deleteGoal(
+    @Header("Authorization") authorization: String,
+    @Query("id") goalId: String
+): Response<DeleteGoalResponse>
+
+@GET("api/v1/users/current/goals/suggestions")
+suspend fun getGoalSuggestions(@Header("Authorization") authorization: String): Response<GoalSuggestionsResponse>
+
+// Leaderboard
+@GET("api/v1/leaders")
+suspend fun getLeaders(
+    @Header("Authorization") authorization: String,
+    @Query("range") range: String = "last_7_days",
+    @Query("language") language: String? = null,
+    @Query("page") page: Int = 1
+): Response<LeadersResponse>
+
+// AI Insights
+@GET("api/v1/users/current/analytics/ai")
+suspend fun getAiAnalytics(
+    @Header("Authorization") authorization: String,
+    @Query("range") range: String = "last_7_days"
+): Response<AiAnalyticsResponse>
+
+// Focus Analytics
+@GET("api/v1/users/current/analytics/focus")
+suspend fun getFocusAnalytics(
+    @Header("Authorization") authorization: String,
+    @Query("range") range: String = "last_7_days"
+): Response<FocusAnalyticsResponse>
 ```
 
 The authorization header is formatted as `Bearer $apiKey` inside the repository.
@@ -76,6 +125,8 @@ The authorization header is formatted as `Bearer $apiKey` inside the repository.
 ## Dynamic base URL
 
 `ApiClient` caches the current `Retrofit` instance. When `ChronovaRepository.saveServerUrl(url)` is called, it invokes `ApiClient.updateBaseUrl(url)`, which invalidates the cached Retrofit instance so the next repository call uses the new base URL.
+
+`isValidUrl(url)` enforces a basic `https?://` pattern and rejects empty strings.
 
 ## Adding a new endpoint
 

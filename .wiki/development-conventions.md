@@ -115,6 +115,8 @@ No tests currently exist. Add them in:
 - `app/src/test/` — unit tests (JUnit 4 is on the classpath).
 - `app/src/androidTest/` — instrumented tests (Espresso is on the classpath).
 
+`./gradlew testDebugUnitTest` runs unit tests in CI, but the test directories are empty.
+
 ## 9. File locations
 
 | Purpose | Location |

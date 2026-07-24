@@ -9,7 +9,7 @@ tags: [build, gradle, docker, release]
 
 ## Build environment
 
-- **Gradle**: 8.13.2
+- **Gradle**: 9.2.1 (wrapper distribution)
 - **Android Gradle Plugin**: 8.13.2
 - **Kotlin**: 2.1.20
 - **Compile / Target SDK**: 36
@@ -85,13 +85,17 @@ The Dockerfile uses:
 - Android command-line tools `9477386`
 - SDK platform `android-34` and build-tools `34.0.0`
 
-## Cleaning
+> The Docker image targets SDK 34 build tooling, while the project itself compiles against SDK 36. Install the API 36 platform and build-tools locally when building outside Docker.
 
-```bash
-./gradlew clean
-```
 
-This removes the root `buildDir`.
+
+## Build scripts
+
+| Script | Purpose |
+|--------|---------|
+| `./build.sh` | Clean, build debug APK, and copy it to `../public/downloads/chronova-debug.apk`. |
+| `./build.sh release` | Clean, build release APK, and copy it to `../public/downloads/chronova-release.apk`. |
+| `./docker-build.sh` | Build and run the `chronova-android-builder` Docker image; outputs `build-output/apk/debug/app-debug.apk`. |
 
 ## Build flavors / types
 
@@ -100,8 +104,15 @@ This removes the root `buildDir`.
 | `debug` | — | default debug key | Incremental compilation disabled (`enableIncrementalCompilation = false`). |
 | `release` | `false` | `signingConfigs.release` | Uses committed release keystore; no ProGuard/R8 minification. |
 
+## Gradle settings
+
+- **Build cache**: disabled in `settings.gradle` (`buildCache { local { enabled = false } }`) so every build is fresh.
+- **Repository mode**: `FAIL_ON_PROJECT_REPOS` — all dependency repositories are declared in `settings.gradle`.
+- **JitPack**: required for MPAndroidChart (`maven { url = 'https://jitpack.io' }`).
+
 ## Troubleshooting
 
 - **JDK mismatch**: ensure `JAVA_HOME` points to JDK 17. The `app/build.gradle` enforces `jvmTarget = '17'`.
 - **SDK not found**: install API 36 platform and build-tools through Android Studio or `sdkmanager`.
+- **Docker SDK mismatch**: the Docker image installs build-tools and platform `android-34`. Add `platforms;android-36` and matching build-tools to `Dockerfile.build` if you want to build SDK 36 artifacts inside the container, or build locally with a fully-configured Android SDK.
 - **Docker permission errors**: the script runs `chmod +x ./gradlew` inside the container.
