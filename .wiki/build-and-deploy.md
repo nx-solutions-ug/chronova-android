@@ -9,13 +9,36 @@ tags: [build, gradle, docker, release]
 
 ## Build environment
 
-- **Gradle**: 8.13.2
+- **Gradle wrapper**: 9.2.1
 - **Android Gradle Plugin**: 8.13.2
 - **Kotlin**: 2.1.20
 - **Compile / Target SDK**: 36
 - **Min SDK**: 24
 - **JVM target**: 17
 - **Build tool**: command line Gradle or Android Studio Ladybug+
+
+### Repository and cache settings
+
+`settings.gradle` enforces a single source of truth for repositories and disables the local build cache:
+
+```gradle
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven { url = 'https://jitpack.io' }  // Required for MPAndroidChart
+    }
+}
+
+buildCache {
+    local {
+        enabled = false
+    }
+}
+```
+
+`gradle.properties` also sets `org.gradle.caching=false`. These settings ensure fresh, reproducible builds.
 
 ## Debug build
 
@@ -104,4 +127,5 @@ This removes the root `buildDir`.
 
 - **JDK mismatch**: ensure `JAVA_HOME` points to JDK 17. The `app/build.gradle` enforces `jvmTarget = '17'`.
 - **SDK not found**: install API 36 platform and build-tools through Android Studio or `sdkmanager`.
+- **JitPack / MPAndroidChart resolution**: ensure the project can reach `https://jitpack.io`; it is declared in `settings.gradle` but network policies may block it.
 - **Docker permission errors**: the script runs `chmod +x ./gradlew` inside the container.

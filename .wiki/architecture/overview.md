@@ -60,13 +60,20 @@ app/src/main/java/com/chronova/app/
     │   └── cards/               # Dashboard card adapter + view holders
     ├── DashboardFragment.kt
     ├── FilesFragment.kt
-    ├── LanguagesPagerFragment.kt
-    ├── LanguagesStatsFragment.kt
+    ├── ProjectsContainerFragment.kt   # Tabbed Projects + Editors container
     ├── ProjectsPagerFragment.kt
     ├── ProjectsStatsFragment.kt
     ├── EditorsPagerFragment.kt
     ├── EditorsStatsFragment.kt
-    └── *Adapter.kt              # RecyclerView adapters
+    ├── LanguagesPagerFragment.kt      # Present but not wired to bottom nav
+    ├── LanguagesStatsFragment.kt
+    ├── GoalsFragment.kt               # Goal management
+    ├── CreateGoalDialogFragment.kt
+    ├── LeaderboardFragment.kt         # Rankings
+    ├── InsightsPagerFragment.kt       # PRO-only AI + Focus tabs
+    ├── AiInsightsFragment.kt
+    ├── FocusFragment.kt
+    └── *Adapter.kt                    # RecyclerView adapters
 ```
 
 ## Fragment patterns

@@ -34,6 +34,8 @@ class MyFragment : Fragment(R.layout.fragment_my) {
 }
 ```
 
+Activities use `lateinit var binding` because their lifecycle is simpler; still clear it in `onDestroy()` if you hold a reference beyond the content view.
+
 ViewBinding is enabled in `app/build.gradle`:
 
 ```gradle
@@ -44,10 +46,10 @@ buildFeatures {
 
 ## 2. Always use `lifecycleScope` for coroutines
 
-Launch coroutines from fragments and activities with `lifecycleScope.launch`. Never use `GlobalScope` or raw thread executors.
+Launch coroutines from fragments and activities with `lifecycleScope.launch`. Prefer `viewLifecycleOwner.lifecycleScope` inside fragments to avoid updating views after `onDestroyView()`. Never use `GlobalScope` or raw thread executors.
 
 ```kotlin
-lifecycleScope.launch {
+viewLifecycleOwner.lifecycleScope.launch {
     repository.getDashboard()
         .onSuccess { data -> /* update UI */ }
         .onFailure { error -> /* show error */ }
@@ -92,9 +94,9 @@ No Hilt, Koin, or manual service locator. Instantiate directly:
 private val repository = ChronovaRepository(requireContext())
 ```
 
-## 6. Fragment factory pattern
+## 6. Fragment arguments
 
-Pass arguments through `Bundle` using a `newInstance` companion function:
+Pass configuration through `Bundle`. You can use a `newInstance` companion function or set arguments directly before attaching the fragment. Common examples in the codebase include `timeRange` for stats fragments and `is_pro_user` for fragments that gate PRO content.
 
 ```kotlin
 companion object {
@@ -125,6 +127,7 @@ No tests currently exist. Add them in:
 | Activities | `app/src/main/java/com/chronova/app/*Activity.kt` |
 | Fragments | `app/src/main/java/com/chronova/app/ui/*Fragment.kt` |
 | Adapters | `app/src/main/java/com/chronova/app/ui/*Adapter.kt` |
+| Dialog fragments | `app/src/main/java/com/chronova/app/ui/*DialogFragment.kt` |
 | ViewHolders | `app/src/main/java/com/chronova/app/ui/main/cards/viewholders/` |
 | Layouts | `app/src/main/res/layout/` |
 | Drawables | `app/src/main/res/drawable/` |
@@ -140,7 +143,7 @@ class NewPagerFragment : Fragment(R.layout.fragment_new_pager) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val adapter = object : FragmentStateAdapter(this) {
+        val adapter = object : FragmentStateAdapter(viewLifecycleOwner) {
             override fun createFragment(position: Int) = when(position) {
                 0 -> NewListFragment.newInstance("Today")
                 1 -> NewListFragment.newInstance("7 Days")

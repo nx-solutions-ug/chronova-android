@@ -16,8 +16,9 @@ The UI layer follows a custom MVVM pattern: fragments own their state, use `life
 - **Launcher activity** declared in `AndroidManifest.xml`.
 - Redirects to `LoginActivity` if the user is not authenticated.
 - Checks the PRO subscription status with `repository.checkProSubscription()` and appends `" ⭐ PRO"` to the toolbar title when true.
-- Hosts a bottom navigation bar with `Dashboard` and `Files` items.
+- Hosts a bottom navigation bar with five items: **Dashboard**, **Projects**, **Goals**, **Leaderboard**, and **Insights**.
 - Toolbar menu provides **Logout**, which clears the API key and returns to `LoginActivity`.
+- Reads an `is_pro_user` argument/flag and passes it to fragments that need to gate PRO features.
 
 ### `LoginActivity`
 
@@ -40,19 +41,41 @@ The UI layer follows a custom MVVM pattern: fragments own their state, use `life
   - line chart for daily activity.
 - `DashboardFragment` is a separate older dashboard with a bar chart and recent activity list. It is not currently wired to bottom navigation.
 
-### Drill-down sections
+### Projects container
 
-| Pager Fragment | Stats Fragment | Focus |
-|----------------|----------------|-------|
-| `LanguagesPagerFragment` | `LanguagesStatsFragment` | Languages only |
-| `ProjectsPagerFragment` | `ProjectsStatsFragment` | Projects only |
-| `EditorsPagerFragment` | `EditorsStatsFragment` | Editors only |
+`ProjectsContainerFragment` is a tabbed container that combines the older per-category drill-downs:
 
-Each pager provides **Today / Last 7 Days / Last 30 Days** tabs.
+| Tab | Fragment | Focus |
+|-----|----------|-------|
+| Projects | `ProjectsPagerFragment` → `ProjectsStatsFragment` | Projects only |
+| Editors | `EditorsPagerFragment` → `EditorsStatsFragment` | Editors only |
 
-### Files
+`LanguagesPagerFragment` / `LanguagesStatsFragment` are also retained in the source tree but are not currently wired to bottom navigation.
 
-`FilesFragment` lists recent file activity derived from heartbeats, grouped by file path and time spent.
+Each stats pager provides **Today / Last 7 Days / Last 30 Days** tabs.
+
+### Goals
+
+`GoalsFragment` lists user-defined coding goals. It supports:
+
+- Creating a goal through `CreateGoalDialogFragment`.
+- Deleting a goal with a swipe gesture or a tap action.
+- Empty-state handling when no goals exist.
+
+### Leaderboard
+
+`LeaderboardFragment` shows a ranked list of users. Free users see only **Last 7 Days**; PRO users can also choose **30 Days** and **90 Days**. The current user is highlighted when present.
+
+### Insights (PRO only)
+
+`InsightsPagerFragment` is only available to PRO users; non-PRO users see a locked-state view. It hosts two tabs:
+
+| Tab | Fragment | Purpose |
+|-----|----------|---------|
+| AI Insights | `AiInsightsFragment` | AI vs. manual contribution pie chart, adoption timeline, efficiency trend, language matrix, project dependency |
+| Focus | `FocusFragment` | Concentration score, deep-work blocks, context switches, project distribution |
+
+Both fragments expose range chips (7 Days, 30 Days, etc.) backed by the repository's analytics methods.
 
 ## Card dashboard
 
@@ -69,11 +92,13 @@ Charts are rendered with [MPAndroidChart](https://github.com/PhilJay/MPAndroidCh
 - **Pie charts** for language/project/editor distribution.
 - **Line charts** for daily activity trends.
 - **Bar charts** in `DashboardFragment`.
+- **Pie charts** in `AiInsightsFragment` and `FocusFragment`.
+- **Line charts** in `AiInsightsFragment` for AI adoption and efficiency trends.
 
 ## Navigation
 
-- Bottom navigation XML: `app/src/main/res/menu/bottom_navigation.xml`.
 - Main toolbar menu: `app/src/main/res/menu/main_menu.xml`.
+- Bottom navigation menu: `app/src/main/res/menu/bottom_navigation.xml`.
 - There is currently no AndroidX Navigation component graph; navigation is done imperatively with `FragmentManager.beginTransaction().replace(...)`.
 
 ## Mandatory ViewBinding pattern
