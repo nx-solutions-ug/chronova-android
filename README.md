@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="public/banner-flux.png" alt="Chronova Android — Developer Productivity Analytics for Android" width="100%" />
+  <img src="public/banner.png" alt="Chronova Android — Developer Productivity Analytics for Android" width="100%" />
 </p>
 
 
