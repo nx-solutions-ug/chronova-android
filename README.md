@@ -2,7 +2,7 @@
   <img src="public/banner-flux.png" alt="Chronova Android — Developer Productivity Analytics for Android" width="100%" />
 </p>
 
-# Chronova Android
+
 
 [![Android](https://img.shields.io/badge/Android-API%2024%2B-brightgreen)](https://developer.android.com)
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.1.20-blue)](https://kotlinlang.org)
