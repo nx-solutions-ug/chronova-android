@@ -15,7 +15,7 @@ The UI layer follows a custom MVVM pattern: fragments own their state, use `life
 
 - **Launcher activity** declared in `AndroidManifest.xml`.
 - Redirects to `LoginActivity` if the user is not authenticated.
-- Checks the PRO subscription status with `repository.checkProSubscription()` and appends `" ⭐ PRO"` to the toolbar title when true.
+- Checks the PRO subscription status with `repository.checkProSubscription()`. The result is driven by the backend's pre-computed `has_premium_features` flag, which already accounts for `proComped`, individual subscriptions, and organization subscriptions. When true, the toolbar title appends `" ⭐ PRO"`.
 - Hosts a bottom navigation bar with `Dashboard` and `Files` items.
 - Toolbar menu provides **Logout**, which clears the API key and returns to `LoginActivity`.
 

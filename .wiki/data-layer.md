@@ -44,6 +44,16 @@ suspend fun checkProSubscription(): Result<Boolean>
 suspend fun getFileActivity(perPage: Int = 50): Result<List<FileActivity>>
 ```
 
+### PRO subscription check
+
+`suspend fun checkProSubscription(): Result<Boolean>` calls `/api/v1/users/current` and returns the value of the backend's pre-computed `has_premium_features` flag:
+
+```kotlin
+Result.success(userData.hasPremiumFeatures == true)
+```
+
+The app no longer reconstructs Pro access from `subscriptionStatus` or `subscriptionPlan` locally. The backend already folds in `proComped`, individual subscriptions, and organization subscriptions when computing `has_premium_features`, so the client stays in sync with server rules.
+
 ## API service
 
 Endpoints mirror a WakaTime-compatible Chronova API:
@@ -72,6 +82,18 @@ suspend fun getProjects(@Header("Authorization") authorization: String): Respons
 ```
 
 The authorization header is formatted as `Bearer $apiKey` inside the repository.
+
+### User response model
+
+`UserResponse` wraps `UserData`, which includes the subscription-related fields used by the app:
+
+| Field | Purpose |
+|-------|---------|
+| `subscriptionStatus` | Raw backend status (informational) |
+| `subscriptionPlan` | Raw backend plan (informational) |
+| `isProComped` | Whether the user has complimentary Pro access |
+| `hasPremiumFeatures` | **Backend-computed boolean the app uses for Pro gates** |
+| `organizationSubscriptions` | Org-level subscriptions the backend considers |
 
 ## Dynamic base URL
 
