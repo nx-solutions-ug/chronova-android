@@ -4,9 +4,10 @@
 
 
 
+[![Build](https://github.com/nx-solutions-ug/chronova-android/actions/workflows/build.yml/badge.svg)](https://github.com/nx-solutions-ug/chronova-android/actions/workflows/build.yml)
 [![Android](https://img.shields.io/badge/Android-API%2024%2B-brightgreen)](https://developer.android.com)
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.1.20-blue)](https://kotlinlang.org)
-[![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
+[![License](https://img.shields.io/badge/License-Commons%20Clause-yellow)](LICENSE)
 
 An Android application for developer productivity analytics. Connects to a Chronova server to display coding statistics including language usage, project time, editor activity, and real-time heartbeats.
 
