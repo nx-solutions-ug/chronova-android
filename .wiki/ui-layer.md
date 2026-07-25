@@ -16,8 +16,9 @@ The UI layer follows a custom MVVM pattern: fragments own their state, use `life
 - **Launcher activity** declared in `AndroidManifest.xml`.
 - Redirects to `LoginActivity` if the user is not authenticated.
 - Checks the PRO subscription status with `repository.checkProSubscription()` and appends `" ⭐ PRO"` to the toolbar title when true.
-- Hosts a bottom navigation bar with `Dashboard` and `Files` items.
+- Hosts a bottom navigation bar with five items: **Dashboard**, **Projects**, **Goals**, **Leaderboard**, and **Insights** (`app/src/main/res/menu/bottom_navigation.xml`).
 - Toolbar menu provides **Logout**, which clears the API key and returns to `LoginActivity`.
+- Passes the current PRO status to fragments that gate features (e.g. `MainPagerFragment`, `LeaderboardFragment`, `InsightsPagerFragment`).
 
 ### `LoginActivity`
 
@@ -34,11 +35,29 @@ The UI layer follows a custom MVVM pattern: fragments own their state, use `life
 - `MainPagerFragment` hosts `ViewPager2` with tabs.
   - Free users see **Today** and **Last 7 Days**.
   - PRO users see six ranges: **Today**, **Last 7 Days**, **Last 30 Days**, **Last 3 Months**, **Last Year**, **All Time**.
+  - Default tab is **Last 7 Days** (`binding.viewPager.setCurrentItem(1, false)`).
 - `MainStatsFragment` is the page inside the pager. It builds a `CardsList` with:
   - global summary card,
   - pie charts for languages/projects/editors,
   - line chart for daily activity.
-- `DashboardFragment` is a separate older dashboard with a bar chart and recent activity list. It is not currently wired to bottom navigation.
+- `DashboardFragment` is a separate older dashboard layout, but the bottom navigation currently starts at `MainPagerFragment`.
+
+### Goals
+
+`GoalsFragment` lists user-defined coding goals. It loads data with `repository.getGoals()` and supports swipe-to-delete via `ItemTouchHelper`. New goals are created through `CreateGoalDialogFragment`, which calls `repository.createGoal(...)` and refreshes the list.
+
+### Leaderboard
+
+`LeaderboardFragment` shows ranked users from `repository.getLeaders(...)`. It highlights the current user (`repository.getUserId()`) and restricts non-PRO users to the **Last 7 Days** range; PRO users can also choose **30 Days** and **90 Days**.
+
+### Insights
+
+`InsightsPagerFragment` is gated for PRO users. When unlocked it hosts:
+
+- **AI Insights** tab → `AiInsightsFragment`: charts and metrics from `repository.getAiAnalytics(range)`.
+- **Focus** tab → `FocusFragment`: concentration score, context switches, and focus analytics from `repository.getFocusAnalytics(range)`.
+
+Free users see a locked state with an upgrade prompt (`R.string.upgrade_to_pro`).
 
 ### Drill-down sections
 
@@ -49,6 +68,10 @@ The UI layer follows a custom MVVM pattern: fragments own their state, use `life
 | `EditorsPagerFragment` | `EditorsStatsFragment` | Editors only |
 
 Each pager provides **Today / Last 7 Days / Last 30 Days** tabs.
+
+### Projects container
+
+`ProjectsContainerFragment` groups the project and editor drill-downs into a single tabbed view with two tabs: **Projects** and **Editors**. This is what the **Projects** bottom-navigation item opens.
 
 ### Files
 

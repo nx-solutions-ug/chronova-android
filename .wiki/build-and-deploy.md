@@ -9,7 +9,7 @@ tags: [build, gradle, docker, release]
 
 ## Build environment
 
-- **Gradle**: 8.13.2
+- **Gradle wrapper**: 9.2.1 (`gradle/wrapper/gradle-wrapper.properties`)
 - **Android Gradle Plugin**: 8.13.2
 - **Kotlin**: 2.1.20
 - **Compile / Target SDK**: 36
@@ -99,6 +99,16 @@ This removes the root `buildDir`.
 |------|-----------------|---------|-------|
 | `debug` | — | default debug key | Incremental compilation disabled (`enableIncrementalCompilation = false`). |
 | `release` | `false` | `signingConfigs.release` | Uses committed release keystore; no ProGuard/R8 minification. |
+
+## CI artifacts
+
+The GitHub Actions `build.yml` workflow (`workflow_dispatch` trigger) uploads the resulting APKs and test reports:
+
+| Artifact | Retention |
+|----------|-----------|
+| `app-debug` | 7 days |
+| `app-release` | 30 days |
+| `test-results` | 7 days |
 
 ## Troubleshooting
 

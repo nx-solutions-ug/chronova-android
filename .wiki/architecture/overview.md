@@ -46,7 +46,7 @@ Chronova Android uses a **custom MVVM + Repository Pattern**. It deliberately av
 
 ```
 app/src/main/java/com/chronova/app/
-├── MainActivity.kt              # Launcher, bottom nav, toolbar, logout
+├── MainActivity.kt              # Launcher, bottom nav, toolbar, logout, PRO status
 ├── LoginActivity.kt             # Login or API-key authentication
 ├── data/
 │   ├── ApiClient.kt             # Retrofit singleton
@@ -58,14 +58,24 @@ app/src/main/java/com/chronova/app/
     │   ├── MainPagerFragment.kt
     │   ├── MainStatsFragment.kt
     │   └── cards/               # Dashboard card adapter + view holders
+    ├── AiInsightsFragment.kt
+    ├── CreateGoalDialogFragment.kt
     ├── DashboardFragment.kt
-    ├── FilesFragment.kt
-    ├── LanguagesPagerFragment.kt
-    ├── LanguagesStatsFragment.kt
-    ├── ProjectsPagerFragment.kt
-    ├── ProjectsStatsFragment.kt
+    ├── EditorsFragment.kt
     ├── EditorsPagerFragment.kt
     ├── EditorsStatsFragment.kt
+    ├── FilesFragment.kt
+    ├── FocusFragment.kt
+    ├── GoalsFragment.kt
+    ├── InsightsPagerFragment.kt
+    ├── LanguagesFragment.kt
+    ├── LanguagesPagerFragment.kt
+    ├── LanguagesStatsFragment.kt
+    ├── LeaderboardFragment.kt
+    ├── ProjectsContainerFragment.kt
+    ├── ProjectsFragment.kt
+    ├── ProjectsPagerFragment.kt
+    ├── ProjectsStatsFragment.kt
     └── *Adapter.kt              # RecyclerView adapters
 ```
 
@@ -81,5 +91,9 @@ app/src/main/java/com/chronova/app/
 2. Set `_binding = null` in `onDestroyView()`.
 3. Cancel any `Job` stored from `lifecycleScope.launch` in `onDestroyView()`.
 4. Guard UI updates with `isAdded && _binding != null`.
+
+## PRO status
+
+PRO status is fetched once when `MainActivity` starts (`repository.checkProSubscription()`) and is passed as an `is_pro_user` argument to fragments that need it. `MainPagerFragment` uses it to decide how many dashboard time-range tabs to show; `LeaderboardFragment` and `InsightsPagerFragment` use it to gate additional ranges or entire sections.
 
 See [UI Layer](../ui-layer.md) for fragment details and [Development Conventions](../development-conventions.md) for the mandatory patterns.
