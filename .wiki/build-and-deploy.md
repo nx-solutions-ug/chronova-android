@@ -9,13 +9,19 @@ tags: [build, gradle, docker, release]
 
 ## Build environment
 
-- **Gradle**: 8.13.2
+- **Gradle**: 9.2.1
 - **Android Gradle Plugin**: 8.13.2
 - **Kotlin**: 2.1.20
 - **Compile / Target SDK**: 36
 - **Min SDK**: 24
 - **JVM target**: 17
 - **Build tool**: command line Gradle or Android Studio Ladybug+
+
+## CI build
+
+The GitHub Actions `build.yml` workflow builds the app on every manual run (`workflow_dispatch`). It sets up JDK 17, the Android SDK, runs `./gradlew testDebugUnitTest`, then builds both debug and release APKs and uploads them as artifacts (7-day debug/test retention, 30-day release retention).
+
+[![Build](https://github.com/nx-solutions-ug/chronova-android/actions/workflows/build.yml/badge.svg)](https://github.com/nx-solutions-ug/chronova-android/actions/workflows/build.yml)
 
 ## Debug build
 
