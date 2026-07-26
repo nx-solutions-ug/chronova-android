@@ -16,7 +16,8 @@ The UI layer follows a custom MVVM pattern: fragments own their state, use `life
 - **Launcher activity** declared in `AndroidManifest.xml`.
 - Redirects to `LoginActivity` if the user is not authenticated.
 - Checks the PRO subscription status with `repository.checkProSubscription()` and appends `" ⭐ PRO"` to the toolbar title when true.
-- Hosts a bottom navigation bar with `Dashboard` and `Files` items.
+- Passes the PRO flag to fragments that need it (`MainPagerFragment`, `LeaderboardFragment`, `InsightsPagerFragment`).
+- Hosts a bottom navigation bar with five items: **Dashboard**, **Projects**, **Goals**, **Leaderboard**, and **Insights**.
 - Toolbar menu provides **Logout**, which clears the API key and returns to `LoginActivity`.
 
 ### `LoginActivity`
@@ -38,7 +39,13 @@ The UI layer follows a custom MVVM pattern: fragments own their state, use `life
   - global summary card,
   - pie charts for languages/projects/editors,
   - line chart for daily activity.
-- `DashboardFragment` is a separate older dashboard with a bar chart and recent activity list. It is not currently wired to bottom navigation.
+- `DashboardFragment` is a legacy dashboard with a bar chart and recent activity list. It is not currently wired to bottom navigation.
+
+### Projects container
+
+`ProjectsContainerFragment` hosts a `ViewPager2` with two tabs:
+- **Projects** (`ProjectsPagerFragment` → `ProjectsStatsFragment`)
+- **Editors** (`EditorsPagerFragment` → `EditorsStatsFragment`)
 
 ### Drill-down sections
 
@@ -49,6 +56,22 @@ The UI layer follows a custom MVVM pattern: fragments own their state, use `life
 | `EditorsPagerFragment` | `EditorsStatsFragment` | Editors only |
 
 Each pager provides **Today / Last 7 Days / Last 30 Days** tabs.
+
+### Goals
+
+`GoalsFragment` lists user-defined coding goals from the server. It supports swipe-to-delete and a floating action button that opens `CreateGoalDialogFragment` to add new goals.
+
+### Leaderboard
+
+`LeaderboardFragment` shows a ranked list of users for a selected time range. Free users can view the **Last 7 Days** range only; PRO users can also choose **Last 30 Days** and **Last 90 Days**. The current user is pinned at the top when they are not already visible in the first page.
+
+### Insights
+
+`InsightsPagerFragment` hosts two PRO-gated tabs:
+- **AI Insights** (`AiInsightsFragment`) — AI vs. manual coding analytics.
+- **Focus** (`FocusFragment`) — concentration score, context switches, and deep-work blocks.
+
+Free users see a locked-state view instead of the pager.
 
 ### Files
 
@@ -72,8 +95,8 @@ Charts are rendered with [MPAndroidChart](https://github.com/PhilJay/MPAndroidCh
 
 ## Navigation
 
-- Bottom navigation XML: `app/src/main/res/menu/bottom_navigation.xml`.
-- Main toolbar menu: `app/src/main/res/menu/main_menu.xml`.
+- Bottom navigation XML: `app/src/main/res/menu/bottom_navigation.xml` defines `Dashboard`, `Projects`, `Goals`, `Leaderboard`, and `Insights`.
+- Main toolbar menu: `app/src/main/res/menu/main_menu.xml` defines **Logout**.
 - There is currently no AndroidX Navigation component graph; navigation is done imperatively with `FragmentManager.beginTransaction().replace(...)`.
 
 ## Mandatory ViewBinding pattern

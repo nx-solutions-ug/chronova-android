@@ -128,8 +128,22 @@ No tests currently exist. Add them in:
 | ViewHolders | `app/src/main/java/com/chronova/app/ui/main/cards/viewholders/` |
 | Layouts | `app/src/main/res/layout/` |
 | Drawables | `app/src/main/res/drawable/` |
+| Bottom navigation menu | `app/src/main/res/menu/bottom_navigation.xml` |
+| Toolbar menu | `app/src/main/res/menu/main_menu.xml` |
 
-## 10. Adding a fragment with ViewPager
+## 10. Passing PRO status to fragments
+
+Fragments that gate content by subscription receive `is_pro_user` through arguments from `MainActivity`:
+
+```kotlin
+val frag = MyProGatedFragment().apply {
+    arguments = Bundle().apply { putBoolean("is_pro_user", isProUser) }
+}
+```
+
+Use this flag in `onCreate()` or `onViewCreated()` to decide tab counts, available ranges, or whether to show a locked-state view.
+
+## 11. Adding a fragment with ViewPager
 
 Use `FragmentStateAdapter` and `TabLayoutMediator`:
 
@@ -158,3 +172,12 @@ class NewPagerFragment : Fragment(R.layout.fragment_new_pager) {
 ```
 
 For the shorter agent quick-reference, see [`AGENTS.md`](../AGENTS.md).
+
+## 12. Adding a new repository API group
+
+When you add a server endpoint:
+
+1. Add request/response DTOs in `ApiModels.kt`.
+2. Declare the endpoint in `ChronovaApiService.kt`.
+3. Add a suspending `Result<T>` wrapper in `ChronovaRepository.kt`.
+4. Create the fragment/adapter in `ui/` and wire it through `MainActivity` if it belongs in bottom navigation.

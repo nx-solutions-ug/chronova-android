@@ -46,6 +46,16 @@ adb install app/build/outputs/apk/debug/app-debug.apk
    - **API key**: paste an existing API key directly.
 4. Tap the login / API key button. On success, `MainActivity` loads the dashboard.
 
+## Main screens
+
+Use the bottom navigation bar to switch between:
+
+- **Dashboard** — time-range cards (two ranges for free users, six for PRO).
+- **Projects** — projects and editors tabs.
+- **Goals** — create and track coding goals.
+- **Leaderboard** — ranked users by time range.
+- **Insights** — AI Insights and Focus Analytics (PRO only; free users see a locked state).
+
 ## Server configuration
 
 The server URL is stored in `SharedPreferences` under the key `server_url`. The app writes it through [`ChronovaRepository.saveServerUrl()`](./data-layer.md#server-url). The default value is `https://chronova.dev/`.

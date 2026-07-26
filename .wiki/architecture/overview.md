@@ -46,7 +46,7 @@ Chronova Android uses a **custom MVVM + Repository Pattern**. It deliberately av
 
 ```
 app/src/main/java/com/chronova/app/
-├── MainActivity.kt              # Launcher, bottom nav, toolbar, logout
+├── MainActivity.kt              # Launcher, bottom nav, toolbar, logout, PRO badge
 ├── LoginActivity.kt             # Login or API-key authentication
 ├── data/
 │   ├── ApiClient.kt             # Retrofit singleton
@@ -55,13 +55,20 @@ app/src/main/java/com/chronova/app/
 │   └── ChronovaRepository.kt    # Single source of truth
 └── ui/
     ├── main/
-    │   ├── MainPagerFragment.kt
-    │   ├── MainStatsFragment.kt
+    │   ├── MainPagerFragment.kt # Dashboard ranges (free vs. PRO)
+    │   ├── MainStatsFragment.kt # Card-based dashboard page
     │   └── cards/               # Dashboard card adapter + view holders
-    ├── DashboardFragment.kt
+    ├── AiInsightsFragment.kt    # AI coding analytics (PRO)
+    ├── CreateGoalDialogFragment.kt
+    ├── DashboardFragment.kt       # Legacy dashboard (unused by bottom nav)
     ├── FilesFragment.kt
+    ├── FocusFragment.kt           # Focus/deep-work analytics (PRO)
+    ├── GoalsFragment.kt           # Goal list + create/delete
+    ├── InsightsPagerFragment.kt   # AI Insights + Focus tabs (PRO-gated)
     ├── LanguagesPagerFragment.kt
     ├── LanguagesStatsFragment.kt
+    ├── LeaderboardFragment.kt     # Ranked users by time range
+    ├── ProjectsContainerFragment.kt # Projects + Editors tabs
     ├── ProjectsPagerFragment.kt
     ├── ProjectsStatsFragment.kt
     ├── EditorsPagerFragment.kt
@@ -71,9 +78,10 @@ app/src/main/java/com/chronova/app/
 
 ## Fragment patterns
 
-- **Pager fragment**: hosts `ViewPager2` + `TabLayout` with a `FragmentStateAdapter`. Used for dashboard (`MainPagerFragment`) and per-section drill-downs (`LanguagesPagerFragment`, `ProjectsPagerFragment`, `EditorsPagerFragment`).
+- **Pager fragment**: hosts `ViewPager2` + `TabLayout` with a `FragmentStateAdapter`. Used for the dashboard (`MainPagerFragment`), per-section drill-downs (`LanguagesPagerFragment`, `ProjectsPagerFragment`, `EditorsPagerFragment`), the projects container (`ProjectsContainerFragment`), and the insights container (`InsightsPagerFragment`).
 - **Stats fragment**: one tab page inside a pager. It reads a `timeRange` argument created by `newInstance()` and loads data with `lifecycleScope`.
-- **List fragment**: a simple `RecyclerView` backed by a repository call, e.g. `FilesFragment`.
+- **List fragment**: a simple `RecyclerView` backed by a repository call, e.g. `FilesFragment` or `GoalsFragment`.
+- **PRO-gated container**: `InsightsPagerFragment` hides its pager and shows a locked-state view when `is_pro_user` is false.
 
 ## Lifecycle rules
 
