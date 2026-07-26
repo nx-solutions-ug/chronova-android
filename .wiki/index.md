@@ -6,6 +6,7 @@ description: "Files and subdirectories in Wiki."
 
 # Files
 
+- [Automation & CI/CD](automation.md) - GitHub Actions workflows, the OMP agent, vouch gates, release drafting, and the wiki update pipeline.
 - [Build & Deploy](build-and-deploy.md) - Gradle commands, release signing, and Docker builds for Chronova Android.
 - [Data Layer](data-layer.md) - Repository, API client, models, authentication, and server configuration.
 - [Development Conventions](development-conventions.md) - Mandatory patterns and rules for contributing to Chronova Android.

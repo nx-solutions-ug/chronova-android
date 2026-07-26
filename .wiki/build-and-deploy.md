@@ -157,6 +157,8 @@ The `build.yml` workflow is triggered manually (`workflow_dispatch`). It sets up
 
 Dependency updates are managed by Renovate, configured in `renovate.json`. Major workflow actions (`actions/checkout`, `actions/cache`) and the Gradle wrapper are updated via the open PRs listed in the repository.
 
+For the full automation stack — OMP agent triage/reviews, vouch gates, release drafting, and the wiki update pipeline — see [Automation & CI/CD](./automation.md).
+
 ## Troubleshooting
 
 - **JDK mismatch**: ensure `JAVA_HOME` points to JDK 17. The `app/build.gradle` enforces `jvmTarget = '17'`.

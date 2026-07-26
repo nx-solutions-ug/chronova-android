@@ -171,13 +171,13 @@ class NewPagerFragment : Fragment(R.layout.fragment_new_pager) {
 }
 ```
 
-## 13. Renovate / dependency PRs
+## 12. Renovate / dependency PRs
 
 Dependency updates are handled by Renovate. Workflow action updates (for example `actions/checkout` and `actions/cache`) are tracked in the repository and should not be duplicated manually. Renovate PRs are reviewed by the OMP agent in `omp-ci.yml`.
 
 For the shorter agent quick-reference, see [`AGENTS.md`](../AGENTS.md).
 
-## 12. Adding a new repository API group
+## 13. Adding a new repository API group
 
 When you add a server endpoint:
 
@@ -185,3 +185,12 @@ When you add a server endpoint:
 2. Declare the endpoint in `ChronovaApiService.kt`.
 3. Add a suspending `Result<T>` wrapper in `ChronovaRepository.kt`.
 4. Create the fragment/adapter in `ui/` and wire it through `MainActivity` if it belongs in bottom navigation.
+
+## 14. Agent tooling rules
+
+When writing command templates or rules for the OMP agent, follow the repository rules in `.omp/rules/`:
+
+- `gh-label-idempotent.md` — always append `|| true` to `gh label create`.
+- `tool-paths-must-be-arrays.md` — pass `paths` as an array to `find`/`search` tools.
+
+For the broader agent/automation stack, see [Automation & CI/CD](./automation.md).
