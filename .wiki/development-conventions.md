@@ -125,7 +125,8 @@ No tests currently exist. Add them in:
 | Activities | `app/src/main/java/com/chronova/app/*Activity.kt` |
 | Fragments | `app/src/main/java/com/chronova/app/ui/*Fragment.kt` |
 | Adapters | `app/src/main/java/com/chronova/app/ui/*Adapter.kt` |
-| ViewHolders | `app/src/main/java/com/chronova/app/ui/main/cards/viewholders/` |
+| Dashboard cards | `app/src/main/java/com/chronova/app/ui/main/cards/` |
+| Dashboard card view holders | `app/src/main/java/com/chronova/app/ui/main/cards/viewholders/` |
 | Layouts | `app/src/main/res/layout/` |
 | Drawables | `app/src/main/res/drawable/` |
 
