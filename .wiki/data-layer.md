@@ -16,7 +16,7 @@ The data layer is responsible for all network communication, local persistence o
 | [`ChronovaRepository.kt`](https://github.com/chronova/chronova-android/blob/main/app/src/main/java/com/chronova/app/data/ChronovaRepository.kt) | Single source of truth; exposes `Result<T>` methods. |
 | [`ChronovaApiService.kt`](https://github.com/chronova/chronova-android/blob/main/app/src/main/java/com/chronova/app/data/ChronovaApiService.kt) | Retrofit interface defining REST endpoints. |
 | [`ApiClient.kt`](https://github.com/chronova/chronova-android/blob/main/app/src/main/java/com/chronova/app/data/ApiClient.kt) | Retrofit singleton with dynamic base URL. |
-| [`ApiModels.kt`](https://github.com/chronova/chronova-android/blob/main/app/src/main/java/com/chronova/app/data/ApiModels.kt) | Data classes for requests/responses. |
+| [`ApiModels.kt`](https://github.com/chronova/chronova-android/blob/main/app/src/main/java/com/chronova/app/data/ApiModels.kt) | Data classes for requests/responses, including goals, leaderboard, AI and focus analytics. |
 
 ## Repository
 
@@ -42,6 +42,19 @@ suspend fun getEditors(): Result<EditorResponse>
 suspend fun getStatsForRange(timeRange: String): Result<StatsRangeData>
 suspend fun checkProSubscription(): Result<Boolean>
 suspend fun getFileActivity(perPage: Int = 50): Result<List<FileActivity>>
+
+// Goals
+suspend fun getGoals(): Result<List<Goal>>
+suspend fun createGoal(request: GoalCreateRequest): Result<GoalResponse>
+suspend fun deleteGoal(goalId: String): Result<DeleteGoalResponse>
+suspend fun getGoalSuggestions(): Result<List<GoalSuggestion>>
+
+// Leaderboard
+suspend fun getLeaders(range: String, language: String? = null, page: Int = 1): Result<LeadersResponse>
+
+// Pro-only analytics
+suspend fun getAiAnalytics(range: String): Result<AiAnalyticsData>
+suspend fun getFocusAnalytics(range: String): Result<FocusAnalyticsData>
 ```
 
 ## API service
@@ -49,6 +62,7 @@ suspend fun getFileActivity(perPage: Int = 50): Result<List<FileActivity>>
 Endpoints mirror a WakaTime-compatible Chronova API:
 
 ```kotlin
+// Auth + core stats
 @POST("api/auth/login")
 suspend fun login(@Body request: LoginRequest): Response<LoginResponse>
 
@@ -69,6 +83,47 @@ suspend fun getHeartbeats(
 
 @GET("api/v1/users/current/projects")
 suspend fun getProjects(@Header("Authorization") authorization: String): Response<WakaTimeProjectsResponse>
+
+// Goals
+@GET("api/v1/users/current/goals")
+suspend fun getGoals(@Header("Authorization") authorization: String): Response<GoalsResponse>
+
+@POST("api/v1/users/current/goals")
+suspend fun createGoal(
+    @Header("Authorization") authorization: String,
+    @Body request: GoalCreateRequest
+): Response<GoalResponse>
+
+@DELETE("api/v1/users/current/goals")
+suspend fun deleteGoal(
+    @Header("Authorization") authorization: String,
+    @Query("id") goalId: String
+): Response<DeleteGoalResponse>
+
+@GET("api/v1/users/current/goals/suggestions")
+suspend fun getGoalSuggestions(@Header("Authorization") authorization: String): Response<GoalSuggestionsResponse>
+
+// Leaderboard
+@GET("api/v1/leaders")
+suspend fun getLeaders(
+    @Header("Authorization") authorization: String,
+    @Query("range") range: String = "last_7_days",
+    @Query("language") language: String? = null,
+    @Query("page") page: Int = 1
+): Response<LeadersResponse>
+
+// Pro analytics
+@GET("api/v1/users/current/analytics/ai")
+suspend fun getAiAnalytics(
+    @Header("Authorization") authorization: String,
+    @Query("range") range: String = "last_7_days"
+): Response<AiAnalyticsResponse>
+
+@GET("api/v1/users/current/analytics/focus")
+suspend fun getFocusAnalytics(
+    @Header("Authorization") authorization: String,
+    @Query("range") range: String = "last_7_days"
+): Response<FocusAnalyticsResponse>
 ```
 
 The authorization header is formatted as `Bearer $apiKey` inside the repository.

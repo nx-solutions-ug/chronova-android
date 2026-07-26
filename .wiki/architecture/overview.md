@@ -46,11 +46,11 @@ Chronova Android uses a **custom MVVM + Repository Pattern**. It deliberately av
 
 ```
 app/src/main/java/com/chronova/app/
-├── MainActivity.kt              # Launcher, bottom nav, toolbar, logout
+├── MainActivity.kt              # Launcher, bottom nav, toolbar, logout, PRO checks
 ├── LoginActivity.kt             # Login or API-key authentication
 ├── data/
 │   ├── ApiClient.kt             # Retrofit singleton
-│   ├── ApiModels.kt             # Request/response DTOs
+│   ├── ApiModels.kt             # Request/response DTOs (stats, goals, leaderboard, analytics)
 │   ├── ChronovaApiService.kt    # Retrofit interface
 │   └── ChronovaRepository.kt    # Single source of truth
 └── ui/
@@ -59,21 +59,36 @@ app/src/main/java/com/chronova/app/
     │   ├── MainStatsFragment.kt
     │   └── cards/               # Dashboard card adapter + view holders
     ├── DashboardFragment.kt
-    ├── FilesFragment.kt
-    ├── LanguagesPagerFragment.kt
-    ├── LanguagesStatsFragment.kt
-    ├── ProjectsPagerFragment.kt
-    ├── ProjectsStatsFragment.kt
+    ├── AiInsightsFragment.kt    # PRO: AI-vs-manual coding analytics
+    ├── CreateGoalDialogFragment.kt
+    ├── EditorsFragment.kt
     ├── EditorsPagerFragment.kt
     ├── EditorsStatsFragment.kt
-    └── *Adapter.kt              # RecyclerView adapters
+    ├── FileAdapter.kt
+    ├── FilesFragment.kt
+    ├── FocusFragment.kt         # PRO: focus / deep-work analytics
+    ├── GoalAdapter.kt
+    ├── GoalsFragment.kt         # Coding goals list + swipe-to-delete
+    ├── InsightsPagerFragment.kt # PRO: AI + Focus tabs (locked for free)
+    ├── LanguagesFragment.kt
+    ├── LanguagesPagerFragment.kt
+    ├── LanguagesStatsFragment.kt
+    ├── LeaderboardAdapter.kt
+    ├── LeaderboardFragment.kt   # Rankings, range chips
+    ├── ProjectAdapter.kt
+    ├── ProjectsContainerFragment.kt # Tab container for Projects + Editors
+    ├── ProjectsFragment.kt
+    ├── ProjectsPagerFragment.kt
+    ├── ProjectsStatsFragment.kt
+    └── ActivityAdapter.kt
 ```
 
 ## Fragment patterns
 
-- **Pager fragment**: hosts `ViewPager2` + `TabLayout` with a `FragmentStateAdapter`. Used for dashboard (`MainPagerFragment`) and per-section drill-downs (`LanguagesPagerFragment`, `ProjectsPagerFragment`, `EditorsPagerFragment`).
+- **Pager fragment**: hosts `ViewPager2` + `TabLayout` with a `FragmentStateAdapter`. Used for dashboard (`MainPagerFragment`), per-section drill-downs (`LanguagesPagerFragment`, `ProjectsPagerFragment`, `EditorsPagerFragment`), and the PRO insights section (`InsightsPagerFragment`).
 - **Stats fragment**: one tab page inside a pager. It reads a `timeRange` argument created by `newInstance()` and loads data with `lifecycleScope`.
-- **List fragment**: a simple `RecyclerView` backed by a repository call, e.g. `FilesFragment`.
+- **List fragment**: a simple `RecyclerView` backed by a repository call, e.g. `FilesFragment` or `GoalsFragment`.
+- **Gated section**: `InsightsPagerFragment` checks `is_pro_user` and either shows a locked view or the `ViewPager2`; `LeaderboardFragment` restricts some time-range chips to PRO users.
 
 ## Lifecycle rules
 

@@ -16,7 +16,8 @@ The UI layer follows a custom MVVM pattern: fragments own their state, use `life
 - **Launcher activity** declared in `AndroidManifest.xml`.
 - Redirects to `LoginActivity` if the user is not authenticated.
 - Checks the PRO subscription status with `repository.checkProSubscription()` and appends `" ⭐ PRO"` to the toolbar title when true.
-- Hosts a bottom navigation bar with `Dashboard` and `Files` items.
+- Hosts a bottom navigation bar with **Dashboard**, **Projects**, **Goals**, **Leaderboard**, and **Insights** items; the **Insights** section is gated behind the PRO subscription.
+- Passes `is_pro_user` to fragments that vary their content by subscription status (`MainPagerFragment`, `LeaderboardFragment`, `InsightsPagerFragment`).
 - Toolbar menu provides **Logout**, which clears the API key and returns to `LoginActivity`.
 
 ### `LoginActivity`
@@ -50,6 +51,25 @@ The UI layer follows a custom MVVM pattern: fragments own their state, use `life
 
 Each pager provides **Today / Last 7 Days / Last 30 Days** tabs.
 
+### Projects
+
+`ProjectsContainerFragment` hosts a two-tab pager combining `ProjectsPagerFragment` and `EditorsPagerFragment`. It is wired to the **Projects** bottom-navigation item.
+
+### Goals
+
+`GoalsFragment` lists user-defined coding goals via `GoalAdapter`, supports swipe-to-delete, and uses `CreateGoalDialogFragment` to add new goals.
+
+### Leaderboard
+
+`LeaderboardFragment` displays a ranked list of users. Free users only see the **Last 7 Days** range; PRO users can also choose **Last 30 Days** and **Last 90 Days**.
+
+### Insights (PRO only)
+
+`InsightsPagerFragment` is gated by PRO status. Non-PRO users see a locked state; PRO users see two tabs:
+
+- **AI Insights** — `AiInsightsFragment` shows AI-vs-manual coding metrics, language matrices, and project dependency breakdowns.
+- **Focus** — `FocusFragment` shows concentration scores, deep-work blocks, context switches, and project distribution.
+
 ### Files
 
 `FilesFragment` lists recent file activity derived from heartbeats, grouped by file path and time spent.
@@ -75,6 +95,8 @@ Charts are rendered with [MPAndroidChart](https://github.com/PhilJay/MPAndroidCh
 - Bottom navigation XML: `app/src/main/res/menu/bottom_navigation.xml`.
 - Main toolbar menu: `app/src/main/res/menu/main_menu.xml`.
 - There is currently no AndroidX Navigation component graph; navigation is done imperatively with `FragmentManager.beginTransaction().replace(...)`.
+
+The bottom navigation bar has five items: **Dashboard**, **Projects**, **Goals**, **Leaderboard**, and **Insights**. The title in the toolbar updates to include a `⭐ PRO` badge when the signed-in user has a premium subscription.
 
 ## Mandatory ViewBinding pattern
 

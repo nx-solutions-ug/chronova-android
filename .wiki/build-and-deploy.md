@@ -9,7 +9,7 @@ tags: [build, gradle, docker, release]
 
 ## Build environment
 
-- **Gradle**: 8.13.2
+- **Gradle**: 9.2.1
 - **Android Gradle Plugin**: 8.13.2
 - **Kotlin**: 2.1.20
 - **Compile / Target SDK**: 36
@@ -99,6 +99,13 @@ This removes the root `buildDir`.
 |------|-----------------|---------|-------|
 | `debug` | — | default debug key | Incremental compilation disabled (`enableIncrementalCompilation = false`). |
 | `release` | `false` | `signingConfigs.release` | Uses committed release keystore; no ProGuard/R8 minification. |
+
+## Automated wiki publishing
+
+The `.github/workflows/update-wiki.yml` workflow regenerates and publishes the wiki automatically:
+
+- Triggered on pushes to `main`, manually via `workflow_dispatch`, and daily at 08:00 UTC.
+- Flattens `.wiki/` into the GitHub Wiki repository and opens a `wiki/staging-<timestamp>` PR with the changed `.wiki` files.
 
 ## Troubleshooting
 
