@@ -42,6 +42,19 @@ suspend fun getEditors(): Result<EditorResponse>
 suspend fun getStatsForRange(timeRange: String): Result<StatsRangeData>
 suspend fun checkProSubscription(): Result<Boolean>
 suspend fun getFileActivity(perPage: Int = 50): Result<List<FileActivity>>
+
+// Goals
+suspend fun getGoals(): Result<List<Goal>>
+suspend fun createGoal(request: GoalCreateRequest): Result<GoalResponse>
+suspend fun deleteGoal(goalId: String): Result<DeleteGoalResponse>
+suspend fun getGoalSuggestions(): Result<List<GoalSuggestion>>
+
+// Leaderboard
+suspend fun getLeaders(range: String, language: String? = null, page: Int = 1): Result<LeadersResponse>
+
+// Insights
+suspend fun getAiAnalytics(range: String): Result<AiAnalyticsData>
+suspend fun getFocusAnalytics(range: String): Result<FocusAnalyticsData>
 ```
 
 ## API service
@@ -73,6 +86,17 @@ suspend fun getProjects(@Header("Authorization") authorization: String): Respons
 
 The authorization header is formatted as `Bearer $apiKey` inside the repository.
 
+### Supported endpoint groups
+
+| Group | Endpoints |
+|-------|-----------|
+| Auth / user | `login`, `getCurrentUser` |
+| Stats | `getStats` (range-based), `getProjects` |
+| Activity | `getHeartbeats` |
+| Goals | `getGoals`, `createGoal`, `deleteGoal`, `getGoalSuggestions` |
+| Leaderboard | `getLeaders` |
+| Insights | `getAiAnalytics`, `getFocusAnalytics` |
+
 ## Dynamic base URL
 
 `ApiClient` caches the current `Retrofit` instance. When `ChronovaRepository.saveServerUrl(url)` is called, it invokes `ApiClient.updateBaseUrl(url)`, which invalidates the cached Retrofit instance so the next repository call uses the new base URL.
@@ -98,6 +122,10 @@ suspend fun getNewData(): Result<NewData> = try {
     Result.failure(e)
 }
 ```
+
+## User and PRO status
+
+`checkProSubscription()` calls `api/v1/users/current` and reads the backend field `has_premium_features`, which already accounts for individual subscriptions, comped PRO status, and organization subscriptions. The user ID returned by this call is also stored under the `user_id` SharedPreferences key so the leaderboard can highlight the current user.
 
 ## Error handling
 
