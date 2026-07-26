@@ -9,7 +9,7 @@ tags: [build, gradle, docker, release]
 
 ## Build environment
 
-- **Gradle**: 8.13.2
+- **Gradle wrapper**: 9.2.1
 - **Android Gradle Plugin**: 8.13.2
 - **Kotlin**: 2.1.20
 - **Compile / Target SDK**: 36
@@ -63,6 +63,20 @@ signingConfigs {
 ```
 
 > The keystore is checked into the repository for convenience in this project. For production apps, store credentials outside source control.
+
+## CI build
+
+A GitHub Actions workflow (`.github/workflows/build.yml`) builds both debug and release APKs on demand:
+
+- **Trigger**: `workflow_dispatch` (manual run from the Actions tab).
+- **Runner**: `ubuntu-latest`, JDK 17 Temurin, Android SDK command-line tools.
+- **Steps**: cache Gradle, run `./gradlew testDebugUnitTest`, `./gradlew assembleDebug`, `./gradlew assembleRelease`.
+- **Artifacts**:
+  - `app-debug` — retained for 7 days.
+  - `app-release` — retained for 30 days.
+  - `test-results` — retained for 7 days.
+
+The README Build badge links to the latest run of this workflow.
 
 ## Docker build
 

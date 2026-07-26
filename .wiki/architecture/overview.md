@@ -58,22 +58,36 @@ app/src/main/java/com/chronova/app/
     │   ├── MainPagerFragment.kt
     │   ├── MainStatsFragment.kt
     │   └── cards/               # Dashboard card adapter + view holders
+    ├── AiInsightsFragment.kt
+    ├── CreateGoalDialogFragment.kt
     ├── DashboardFragment.kt
-    ├── FilesFragment.kt
-    ├── LanguagesPagerFragment.kt
-    ├── LanguagesStatsFragment.kt
-    ├── ProjectsPagerFragment.kt
-    ├── ProjectsStatsFragment.kt
+    ├── EditorsFragment.kt
     ├── EditorsPagerFragment.kt
     ├── EditorsStatsFragment.kt
+    ├── FilesFragment.kt
+    ├── FocusFragment.kt
+    ├── GoalAdapter.kt
+    ├── GoalsFragment.kt
+    ├── InsightsPagerFragment.kt
+    ├── LanguagesFragment.kt
+    ├── LanguagesPagerFragment.kt
+    ├── LanguagesStatsFragment.kt
+    ├── LeaderboardAdapter.kt
+    ├── LeaderboardFragment.kt
+    ├── ProjectAdapter.kt
+    ├── ProjectsContainerFragment.kt
+    ├── ProjectsFragment.kt
+    ├── ProjectsPagerFragment.kt
+    ├── ProjectsStatsFragment.kt
     └── *Adapter.kt              # RecyclerView adapters
 ```
 
 ## Fragment patterns
 
-- **Pager fragment**: hosts `ViewPager2` + `TabLayout` with a `FragmentStateAdapter`. Used for dashboard (`MainPagerFragment`) and per-section drill-downs (`LanguagesPagerFragment`, `ProjectsPagerFragment`, `EditorsPagerFragment`).
+- **Pager fragment**: hosts `ViewPager2` + `TabLayout` with a `FragmentStateAdapter`. Used for dashboard (`MainPagerFragment`), per-section drill-downs (`LanguagesPagerFragment`, `ProjectsPagerFragment`, `EditorsPagerFragment`), and the Insights tab (`InsightsPagerFragment`).
 - **Stats fragment**: one tab page inside a pager. It reads a `timeRange` argument created by `newInstance()` and loads data with `lifecycleScope`.
-- **List fragment**: a simple `RecyclerView` backed by a repository call, e.g. `FilesFragment`.
+- **List fragment**: a simple `RecyclerView` backed by a repository call, e.g. `FilesFragment`, `GoalsFragment`, `LeaderboardFragment`.
+- **Container fragment**: groups related pager fragments under one bottom-navigation destination. `ProjectsContainerFragment` combines `ProjectsPagerFragment` and `EditorsPagerFragment`.
 
 ## Lifecycle rules
 

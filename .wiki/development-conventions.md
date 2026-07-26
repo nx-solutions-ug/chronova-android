@@ -126,6 +126,7 @@ No tests currently exist. Add them in:
 | Fragments | `app/src/main/java/com/chronova/app/ui/*Fragment.kt` |
 | Adapters | `app/src/main/java/com/chronova/app/ui/*Adapter.kt` |
 | ViewHolders | `app/src/main/java/com/chronova/app/ui/main/cards/viewholders/` |
+| Goal dialog | `app/src/main/java/com/chronova/app/ui/CreateGoalDialogFragment.kt` |
 | Layouts | `app/src/main/res/layout/` |
 | Drawables | `app/src/main/res/drawable/` |
 

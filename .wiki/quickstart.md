@@ -19,7 +19,7 @@ Get the Chronova Android app running on a device or emulator.
 ## Clone the repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/nx-solutions-ug/chronova-android.git
 cd chronova-android
 ```
 
@@ -30,6 +30,8 @@ cd chronova-android
 ```
 
 Output: `app/build/outputs/apk/debug/app-debug.apk`
+
+You can also trigger the GitHub Actions [`Build Android App`](./build-and-deploy.md#ci-build) workflow to build debug and release APKs in CI.
 
 ## Install on a device or emulator
 
