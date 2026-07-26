@@ -1,1 +1,1 @@
-docs: update wiki (3 new pages, 21 updated pages)
+docs: update wiki (3 new pages, 6 updated pages)
