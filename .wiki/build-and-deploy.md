@@ -125,6 +125,27 @@ This removes the root `buildDir`.
 | `debug` | — | default debug key | Incremental compilation disabled (`enableIncrementalCompilation = false`). |
 | `release` | `false` | `signingConfigs.release` | Uses committed release keystore; no ProGuard/R8 minification. |
 
+## CI/CD
+
+The `.github/workflows/build.yml` workflow builds, tests, and uploads APKs on manual trigger (`workflow_dispatch`).
+
+### Workflow steps
+
+1. Check out the repository with `actions/checkout@v4`.
+2. Set up **JDK 17** with `actions/setup-java@v5` (Temurin distribution).
+3. Install the Android SDK with `android-actions/setup-android@v3`.
+4. Cache Gradle packages with `actions/cache@v4`.
+5. Run `./gradlew testDebugUnitTest`.
+6. Build debug and release APKs with `./gradlew assembleDebug` and `./gradlew assembleRelease`.
+7. Upload artifacts:
+   - `app-debug` — retention 7 days.
+   - `app-release` — retention 30 days.
+   - `test-results` — retention 7 days.
+
+### Recent CI change
+
+`actions/setup-java` was updated to **v5** in commit `d63831c` (#28). The workflow continues to use JDK 17 and the Temurin distribution.
+
 ## Troubleshooting
 
 - **JDK mismatch**: ensure `JAVA_HOME` points to JDK 17. The `app/build.gradle` enforces `jvmTarget = '17'`.
