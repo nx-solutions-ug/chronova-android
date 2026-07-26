@@ -30,7 +30,7 @@ Current versions are defined in `app/build.gradle`:
 | Navigation | `androidx.navigation:navigation-fragment-ktx` | 2.9.8 |
 | Navigation | `androidx.navigation:navigation-ui-ktx` | 2.9.6 |
 | Lifecycle | `androidx.lifecycle:lifecycle-viewmodel-ktx` | 2.10.0 |
-| Lifecycle | `androidx.lifecycle:lifecycle-livedata-ktx` | 2.10.0 |
+| Lifecycle | `androidx.lifecycle:lifecycle-livedata-ktx` | 2.11.0 |
 | Networking | `com.squareup.retrofit2:retrofit` | 3.0.0 |
 | Networking | `com.squareup.retrofit2:converter-gson` | 3.0.0 |
 | Networking | `com.squareup.okhttp3:logging-interceptor` | 5.3.2 |
