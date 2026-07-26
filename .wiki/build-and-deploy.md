@@ -23,7 +23,7 @@ Current versions are defined in `app/build.gradle`:
 
 | Category | Library | Version |
 |----------|---------|---------|
-| UI core | `androidx.core:core-ktx` | 1.17.0 |
+| UI core | `androidx.core:core-ktx` | 1.19.0 |
 | UI core | `androidx.appcompat:appcompat` | 1.7.1 |
 | UI core | `com.google.android.material:material` | 1.13.0 |
 | UI core | `androidx.constraintlayout:constraintlayout` | 2.2.1 |
