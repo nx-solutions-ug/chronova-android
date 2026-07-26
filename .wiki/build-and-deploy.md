@@ -125,6 +125,22 @@ This removes the root `buildDir`.
 | `debug` | — | default debug key | Incremental compilation disabled (`enableIncrementalCompilation = false`). |
 | `release` | `false` | `signingConfigs.release` | Uses committed release keystore; no ProGuard/R8 minification. |
 
+## CI/CD workflows
+
+Workflows live in `.github/workflows/`:
+
+| Workflow | Trigger | Purpose |
+|----------|---------|---------|
+| `build.yml` | Manual (`workflow_dispatch`) | Build and test the app, then upload debug and release APK artifacts. |
+| `update-wiki.yml` | Push to `main`, daily schedule, or manual | Runs the Wiki Agent to update `.wiki`, then publishes to the GitHub Wiki and opens a staging snapshot PR. |
+| `auto-manage.yml` | Issues opened/reopened, PRs opened | Labels new issues `needs-triage` and auto-assigns them to `niklasschaeffer`. |
+| `omp-ci.yml` | Issues opened, PR opened/synchronize/ready for review | OMP agent triage, labeling, and PR review. |
+| `omp.yml` | Issue/PR comment containing `/omp` | Runs OMP agent commands from `.omp/commands/`. |
+| `vouch-pr.yml` | PR opened/reopened/ready for review | Closes PRs from unvouched users and applies the `vouched` label to allowed PRs. |
+| `vouch-manage.yml` | Discussion comment created | Applies maintainer `!vouch`, `!denounce`, and `!unvouch` commands. |
+
+See [Contributing](./contributing.md) for how the vouch gate works.
+
 ## Troubleshooting
 
 - **JDK mismatch**: ensure `JAVA_HOME` points to JDK 17. The `app/build.gradle` enforces `jvmTarget = '17'`.
