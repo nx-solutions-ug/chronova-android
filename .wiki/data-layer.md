@@ -97,6 +97,8 @@ The authorization header is formatted as `Bearer $apiKey` inside the repository.
 | Leaderboard | `getLeaders` |
 | Insights | `getAiAnalytics`, `getFocusAnalytics` |
 
+The models follow a WakaTime-compatible shape on the Chronova server; response wrappers expose the data under a `data` field and Gson serialization is configured in `ApiModels.kt`.
+
 ## Dynamic base URL
 
 `ApiClient` caches the current `Retrofit` instance. When `ChronovaRepository.saveServerUrl(url)` is called, it invokes `ApiClient.updateBaseUrl(url)`, which invalidates the cached Retrofit instance so the next repository call uses the new base URL.
@@ -134,3 +136,7 @@ suspend fun getNewData(): Result<NewData> = try {
 - Network/parse exception → wrapped in `Result.failure(e)`.
 
 UI callers should handle both branches with `Result.fold(onSuccess, onFailure)`.
+
+## Continuous integration
+
+The `build.yml` workflow runs `testDebugUnitTest`, `assembleDebug`, and `assembleRelease` on every manual trigger. For the full automation stack — including the OMP agent that triages issues, labels/reviews PRs, and the wiki update pipeline — see [Build & Deploy](./build-and-deploy.md).

@@ -171,6 +171,10 @@ class NewPagerFragment : Fragment(R.layout.fragment_new_pager) {
 }
 ```
 
+## 13. Renovate / dependency PRs
+
+Dependency updates are handled by Renovate. Workflow action updates (for example `actions/checkout` and `actions/cache`) are tracked in the repository and should not be duplicated manually. Renovate PRs are reviewed by the OMP agent in `omp-ci.yml`.
+
 For the shorter agent quick-reference, see [`AGENTS.md`](../AGENTS.md).
 
 ## 12. Adding a new repository API group

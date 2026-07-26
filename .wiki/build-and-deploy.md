@@ -16,6 +16,8 @@ tags: [build, gradle, docker, release]
 - **Min SDK**: 24
 - **JVM target**: 17
 - **Build tool**: command line Gradle or Android Studio Ladybug+
+- **Build cache**: Disabled (`org.gradle.caching=false` in `gradle.properties`; local cache off in `settings.gradle`) to ensure fresh builds.
+- **Repository mode**: `FAIL_ON_PROJECT_REPOS` — all dependency repositories must be declared in `settings.gradle`.
 
 ## Key dependencies
 
@@ -34,7 +36,7 @@ Current versions are defined in `app/build.gradle`:
 | Networking | `com.squareup.retrofit2:retrofit` | 3.0.0 |
 | Networking | `com.squareup.retrofit2:converter-gson` | 3.0.0 |
 | Networking | `com.squareup.okhttp3:logging-interceptor` | 5.3.2 |
-| Charts | `com.github.PhilJay:MPAndroidChart` | 3.1.0 |
+| Charts | `com.github.PhilJay:MPAndroidChart` (JitPack) | 3.1.0 |
 | Lists | `androidx.recyclerview:recyclerview` | 1.4.0 |
 | Paging | `androidx.viewpager2:viewpager2` | 1.1.0 |
 | Storage | `androidx.preference:preference-ktx` | 1.2.1 |
@@ -89,6 +91,22 @@ signingConfigs {
 
 > The keystore is checked into the repository for convenience in this project. For production apps, store credentials outside source control.
 
+## `build.sh` helper
+
+The repository includes `build.sh` to clean, build, and copy the resulting APK to `../public/downloads/`.
+
+```bash
+./build.sh        # Debug APK
+./build.sh release  # Release APK
+```
+
+Output is copied to:
+
+```
+../public/downloads/chronova-debug.apk
+../public/downloads/chronova-release.apk
+```
+
 ## Docker build
 
 A self-contained Docker image downloads the Android SDK and builds the debug APK.
@@ -125,8 +143,23 @@ This removes the root `buildDir`.
 | `debug` | — | default debug key | Incremental compilation disabled (`ext.enableIncrementalCompilation = false`). |
 | `release` | `false` | `signingConfigs.release` | Uses committed release keystore; no ProGuard/R8 minification. |
 
+## CI/CD
+
+The `build.yml` workflow is triggered manually (`workflow_dispatch`). It sets up JDK 17, installs the Android SDK, runs unit tests, builds both debug and release APKs, and uploads them as artifacts with the following retention:
+
+| Artifact | Retention |
+|----------|-----------|
+| `app-debug` | 7 days |
+| `app-release` | 30 days |
+| `test-results` | 7 days |
+
+## Renovate
+
+Dependency updates are managed by Renovate, configured in `renovate.json`. Major workflow actions (`actions/checkout`, `actions/cache`) and the Gradle wrapper are updated via the open PRs listed in the repository.
+
 ## Troubleshooting
 
 - **JDK mismatch**: ensure `JAVA_HOME` points to JDK 17. The `app/build.gradle` enforces `jvmTarget = '17'`.
 - **SDK not found**: install API 36 platform and build-tools through Android Studio or `sdkmanager`.
 - **Docker permission errors**: the script runs `chmod +x ./gradlew` inside the container.
+- **Missing dependency repository errors**: ensure no project-level repositories are added; `settings.gradle` uses `RepositoriesMode.FAIL_ON_PROJECT_REPOS` and declares JitPack explicitly for MPAndroidChart.
