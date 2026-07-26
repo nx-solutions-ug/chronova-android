@@ -16,7 +16,7 @@ The UI layer follows a custom MVVM pattern: fragments own their state, use `life
 - **Launcher activity** declared in `AndroidManifest.xml`.
 - Redirects to `LoginActivity` if the user is not authenticated.
 - Checks the PRO subscription status with `repository.checkProSubscription()` and appends `" ⭐ PRO"` to the toolbar title when true.
-- Hosts a bottom navigation bar with `Dashboard` and `Files` items.
+- Hosts a bottom navigation bar with **Dashboard**, **Projects**, **Goals**, **Leaderboard**, and **Insights** items.
 - Toolbar menu provides **Logout**, which clears the API key and returns to `LoginActivity`.
 
 ### `LoginActivity`
@@ -48,11 +48,26 @@ The UI layer follows a custom MVVM pattern: fragments own their state, use `life
 | `ProjectsPagerFragment` | `ProjectsStatsFragment` | Projects only |
 | `EditorsPagerFragment` | `EditorsStatsFragment` | Editors only |
 
-Each pager provides **Today / Last 7 Days / Last 30 Days** tabs.
+Each pager provides **Today / Last 7 Days / Last 30 Days** tabs. The projects and editors pagers are grouped under a `ProjectsContainerFragment` with tabs for **Projects** and **Editors**.
 
 ### Files
 
 `FilesFragment` lists recent file activity derived from heartbeats, grouped by file path and time spent.
+
+### Goals
+
+`GoalsFragment` shows the user's coding goals in a `RecyclerView`, supports swipe-to-delete, and opens `CreateGoalDialogFragment` from a floating action button. Data is loaded via `repository.getGoals()` and mutations use `createGoal()` / `deleteGoal()`.
+
+### Leaderboard
+
+`LeaderboardFragment` lists ranked users from `repository.getLeaders()`. PRO users can switch between **7 / 30 / 90 Days** ranges; free users see **7 Days** only. The current user row is highlighted using the saved `user_id`.
+
+### Insights
+
+`InsightsPagerFragment` is a PRO-gated tab container. Free users see a locked state; PRO users see two tabs:
+
+- **AI Insights** — `AiInsightsFragment` renders `repository.getAiAnalytics()` as line and pie charts.
+- **Focus** — `FocusFragment` shows focus distribution from `repository.getFocusAnalytics()`.
 
 ## Card dashboard
 

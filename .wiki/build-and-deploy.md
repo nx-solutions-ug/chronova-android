@@ -9,7 +9,7 @@ tags: [build, gradle, docker, release]
 
 ## Build environment
 
-- **Gradle**: 8.13.2
+- **Gradle**: 9.2.1
 - **Android Gradle Plugin**: 8.13.2
 - **Kotlin**: 2.1.20
 - **Compile / Target SDK**: 36
@@ -33,6 +33,15 @@ Install it:
 
 ```bash
 adb install app/build/outputs/apk/debug/app-debug.apk
+```
+
+## Build helper script
+
+`build.sh` wraps Gradle, optionally builds a release variant, and copies the resulting APK to `../public/downloads/`.
+
+```bash
+./build.sh          # debug APK → ../public/downloads/chronova-debug.apk
+./build.sh release  # release APK → ../public/downloads/chronova-release.apk
 ```
 
 ## Release build
@@ -105,3 +114,4 @@ This removes the root `buildDir`.
 - **JDK mismatch**: ensure `JAVA_HOME` points to JDK 17. The `app/build.gradle` enforces `jvmTarget = '17'`.
 - **SDK not found**: install API 36 platform and build-tools through Android Studio or `sdkmanager`.
 - **Docker permission errors**: the script runs `chmod +x ./gradlew` inside the container.
+- **Stale outputs**: build cache is disabled (`org.gradle.caching=false` and `settings.gradle` local cache off) so each build is fresh.

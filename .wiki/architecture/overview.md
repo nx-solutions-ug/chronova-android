@@ -64,8 +64,15 @@ app/src/main/java/com/chronova/app/
     ├── LanguagesStatsFragment.kt
     ├── ProjectsPagerFragment.kt
     ├── ProjectsStatsFragment.kt
+    ├── ProjectsContainerFragment.kt
     ├── EditorsPagerFragment.kt
     ├── EditorsStatsFragment.kt
+    ├── GoalsFragment.kt
+    ├── CreateGoalDialogFragment.kt
+    ├── LeaderboardFragment.kt
+    ├── InsightsPagerFragment.kt
+    ├── AiInsightsFragment.kt
+    ├── FocusFragment.kt
     └── *Adapter.kt              # RecyclerView adapters
 ```
 
