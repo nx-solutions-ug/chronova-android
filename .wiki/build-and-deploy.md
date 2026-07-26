@@ -9,8 +9,8 @@ tags: [build, gradle, docker, release]
 
 ## Build environment
 
-- **Gradle**: 8.13.2
 - **Android Gradle Plugin**: 8.13.2
+- **Gradle wrapper**: 9.2.1 (the `8.13.2` figure in older docs refers to AGP)
 - **Kotlin**: 2.1.20
 - **Compile / Target SDK**: 36
 - **Min SDK**: 24
@@ -84,6 +84,10 @@ The Dockerfile uses:
 - `openjdk:17.0.2-jdk-slim`
 - Android command-line tools `9477386`
 - SDK platform `android-34` and build-tools `34.0.0`
+
+## Build configuration
+
+The Android Gradle Plugin is configured in the top-level `build.gradle`. All dependencies are resolved through `settings.gradle` (`repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)`) and JitPack is enabled for MPAndroidChart. Build cache is disabled in `settings.gradle` and `gradle.properties` to ensure fresh builds.
 
 ## Cleaning
 

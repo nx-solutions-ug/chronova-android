@@ -58,22 +58,30 @@ app/src/main/java/com/chronova/app/
     │   ├── MainPagerFragment.kt
     │   ├── MainStatsFragment.kt
     │   └── cards/               # Dashboard card adapter + view holders
+    ├── AiInsightsFragment.kt
+    ├── CreateGoalDialogFragment.kt
     ├── DashboardFragment.kt
-    ├── FilesFragment.kt
-    ├── LanguagesPagerFragment.kt
-    ├── LanguagesStatsFragment.kt
-    ├── ProjectsPagerFragment.kt
-    ├── ProjectsStatsFragment.kt
     ├── EditorsPagerFragment.kt
     ├── EditorsStatsFragment.kt
+    ├── FilesFragment.kt
+    ├── FocusFragment.kt
+    ├── GoalsFragment.kt
+    ├── InsightsPagerFragment.kt
+    ├── LanguagesPagerFragment.kt
+    ├── LanguagesStatsFragment.kt
+    ├── LeaderboardFragment.kt
+    ├── ProjectsContainerFragment.kt
+    ├── ProjectsPagerFragment.kt
+    ├── ProjectsStatsFragment.kt
     └── *Adapter.kt              # RecyclerView adapters
 ```
 
 ## Fragment patterns
 
-- **Pager fragment**: hosts `ViewPager2` + `TabLayout` with a `FragmentStateAdapter`. Used for dashboard (`MainPagerFragment`) and per-section drill-downs (`LanguagesPagerFragment`, `ProjectsPagerFragment`, `EditorsPagerFragment`).
+- **Pager fragment**: hosts `ViewPager2` + `TabLayout` with a `FragmentStateAdapter`. Used for dashboard (`MainPagerFragment`), drill-downs (`LanguagesPagerFragment`, `ProjectsPagerFragment`, `EditorsPagerFragment`), and analytics (`InsightsPagerFragment`).
 - **Stats fragment**: one tab page inside a pager. It reads a `timeRange` argument created by `newInstance()` and loads data with `lifecycleScope`.
-- **List fragment**: a simple `RecyclerView` backed by a repository call, e.g. `FilesFragment`.
+- **List fragment**: a simple `RecyclerView` backed by a repository call, e.g. `FilesFragment`, `GoalsFragment`, `LeaderboardFragment`.
+- **Analytics fragment**: shows AI or focus analytics from dedicated endpoints, e.g. `AiInsightsFragment`, `FocusFragment`.
 
 ## Lifecycle rules
 

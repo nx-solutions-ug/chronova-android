@@ -16,7 +16,7 @@ The UI layer follows a custom MVVM pattern: fragments own their state, use `life
 - **Launcher activity** declared in `AndroidManifest.xml`.
 - Redirects to `LoginActivity` if the user is not authenticated.
 - Checks the PRO subscription status with `repository.checkProSubscription()` and appends `" ⭐ PRO"` to the toolbar title when true.
-- Hosts a bottom navigation bar with `Dashboard` and `Files` items.
+- Hosts a bottom navigation bar with Dashboard, Projects, Goals, Leaderboard, and Insights items.
 - Toolbar menu provides **Logout**, which clears the API key and returns to `LoginActivity`.
 
 ### `LoginActivity`
@@ -38,7 +38,6 @@ The UI layer follows a custom MVVM pattern: fragments own their state, use `life
   - global summary card,
   - pie charts for languages/projects/editors,
   - line chart for daily activity.
-- `DashboardFragment` is a separate older dashboard with a bar chart and recent activity list. It is not currently wired to bottom navigation.
 
 ### Drill-down sections
 
@@ -49,6 +48,24 @@ The UI layer follows a custom MVVM pattern: fragments own their state, use `life
 | `EditorsPagerFragment` | `EditorsStatsFragment` | Editors only |
 
 Each pager provides **Today / Last 7 Days / Last 30 Days** tabs.
+
+### Goals
+
+`GoalsFragment` displays a scrollable list of coding goals via `GoalAdapter`. Users can:
+- Tap the FAB to open `CreateGoalDialogFragment` and create a new goal (`repository.createGoal()`).
+- Swipe left or right on a goal to delete it (`repository.deleteGoal()`).
+
+`repository.getGoalSuggestions()` can populate suggested goal targets.
+
+### Leaderboard
+
+`LeaderboardFragment` shows a ranked list of users from `repository.getLeaders()`. Range chips let users switch ranges. Free users can only select **7 Days**; PRO users also get **30 Days** and **90 Days**.
+
+### Insights
+
+`InsightsPagerFragment` hosts tabs for analytics features:
+- **AI Insights** (`AiInsightsFragment`): contribution share (AI vs. manual), adoption timeline, efficiency trend, language matrix, and project dependency data from `repository.getAiAnalytics()`.
+- **Focus** (`FocusFragment`): concentration score, deep-work blocks, context switches, and project distribution from `repository.getFocusAnalytics()`.
 
 ### Files
 
@@ -72,8 +89,12 @@ Charts are rendered with [MPAndroidChart](https://github.com/PhilJay/MPAndroidCh
 
 ## Navigation
 
+- **Dashboard** — tabbed stats overview (`MainPagerFragment` → `MainStatsFragment`).
+- **Projects** — drill-down project stats (`ProjectsContainerFragment` → `ProjectsPagerFragment` → `ProjectsStatsFragment`).
+- **Goals** — list, create, and swipe-to-delete coding goals (`GoalsFragment`, `CreateGoalDialogFragment`).
+- **Leaderboard** — ranked leaderboard with range chips; some ranges are PRO-only (`LeaderboardFragment`).
+- **Insights** — tabbed AI insights and focus analytics (`InsightsPagerFragment` → `AiInsightsFragment`, `FocusFragment`).
 - Bottom navigation XML: `app/src/main/res/menu/bottom_navigation.xml`.
-- Main toolbar menu: `app/src/main/res/menu/main_menu.xml`.
 - There is currently no AndroidX Navigation component graph; navigation is done imperatively with `FragmentManager.beginTransaction().replace(...)`.
 
 ## Mandatory ViewBinding pattern

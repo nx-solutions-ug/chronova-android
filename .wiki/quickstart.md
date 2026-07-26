@@ -50,6 +50,16 @@ adb install app/build/outputs/apk/debug/app-debug.apk
 
 The server URL is stored in `SharedPreferences` under the key `server_url`. The app writes it through [`ChronovaRepository.saveServerUrl()`](./data-layer.md#server-url). The default value is `https://chronova.dev/`.
 
+## Build scripts
+
+Two convenience scripts wrap Gradle:
+
+```bash
+./build.sh           # Debug build + copies APK to ../public/downloads/
+./build.sh release   # Release build variant
+./docker-build.sh    # Docker build → build-output/apk/debug/
+```
+
 ## Docker build
 
 If you prefer a containerized build:
