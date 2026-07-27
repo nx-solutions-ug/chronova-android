@@ -27,11 +27,11 @@ Current versions are defined in `app/build.gradle`:
 |----------|---------|---------|
 | UI core | `androidx.core:core-ktx` | 1.19.0 |
 | UI core | `androidx.appcompat:appcompat` | 1.7.1 |
-| UI core | `com.google.android.material:material` | 1.13.0 |
+| UI core | `com.google.android.material:material` | 1.14.0 |
 | UI core | `androidx.constraintlayout:constraintlayout` | 2.2.1 |
 | Navigation | `androidx.navigation:navigation-fragment-ktx` | 2.9.8 |
 | Navigation | `androidx.navigation:navigation-ui-ktx` | 2.9.8 |
-| Lifecycle | `androidx.lifecycle:lifecycle-viewmodel-ktx` | 2.10.0 |
+| Lifecycle | `androidx.lifecycle:lifecycle-viewmodel-ktx` | 2.11.0 |
 | Lifecycle | `androidx.lifecycle:lifecycle-livedata-ktx` | 2.11.0 |
 | Networking | `com.squareup.retrofit2:retrofit` | 3.0.0 |
 | Networking | `com.squareup.retrofit2:converter-gson` | 3.0.0 |
