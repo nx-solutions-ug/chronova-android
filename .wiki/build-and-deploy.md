@@ -27,15 +27,15 @@ Current versions are defined in `app/build.gradle`:
 |----------|---------|---------|
 | UI core | `androidx.core:core-ktx` | 1.19.0 |
 | UI core | `androidx.appcompat:appcompat` | 1.7.1 |
-| UI core | `com.google.android.material:material` | 1.13.0 |
+| UI core | `com.google.android.material:material` | 1.14.0 |
 | UI core | `androidx.constraintlayout:constraintlayout` | 2.2.1 |
 | Navigation | `androidx.navigation:navigation-fragment-ktx` | 2.9.8 |
 | Navigation | `androidx.navigation:navigation-ui-ktx` | 2.9.8 |
-| Lifecycle | `androidx.lifecycle:lifecycle-viewmodel-ktx` | 2.10.0 |
+| Lifecycle | `androidx.lifecycle:lifecycle-viewmodel-ktx` | 2.11.0 |
 | Lifecycle | `androidx.lifecycle:lifecycle-livedata-ktx` | 2.11.0 |
 | Networking | `com.squareup.retrofit2:retrofit` | 3.0.0 |
 | Networking | `com.squareup.retrofit2:converter-gson` | 3.0.0 |
-| Networking | `com.squareup.okhttp3:logging-interceptor` | 5.3.2 |
+| Networking | `com.squareup.okhttp3:logging-interceptor` | 5.4.0 |
 | Charts | `com.github.PhilJay:MPAndroidChart` (JitPack) | 3.1.0 |
 | Lists | `androidx.recyclerview:recyclerview` | 1.4.0 |
 | Paging | `androidx.viewpager2:viewpager2` | 1.1.0 |
