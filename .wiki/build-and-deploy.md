@@ -11,7 +11,7 @@ tags: [build, gradle, docker, release]
 
 - **Gradle**: 9.2.1 (wrapper distribution)
 - **Android Gradle Plugin**: 8.13.2
-- **Kotlin**: 2.1.20
+- **Kotlin**: 2.4.10
 - **Compile / Target SDK**: 36
 - **Min SDK**: 24
 - **JVM target**: 17
