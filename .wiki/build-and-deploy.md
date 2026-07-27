@@ -153,6 +153,15 @@ The `build.yml` workflow is triggered manually (`workflow_dispatch`). It sets up
 | `app-release` | 30 days |
 | `test-results` | 7 days |
 
+## Vouch merge gate
+
+Pull requests from external contributors require a vouch. Two workflows enforce this:
+
+- `vouch-pr.yml` — runs on opened/reopened/ready PRs, checks `.github/VOUCHED.td` via `mitchellh/vouch`, and auto-closes unvouched PRs. It also applies the `vouched` label when the check passes.
+- `vouch-manage.yml` — lets maintainers manage `.github/VOUCHED.td` through Discussion comments (`!vouch`, `!denounce`, `!unvouch`).
+
+Write access collaborators and bot accounts are automatically allowed. See `CONTRIBUTING.md` and [Development Conventions](./development-conventions.md) for the contribution process.
+
 ## Renovate
 
 Dependency updates are managed by Renovate, configured in `renovate.json`. Major workflow actions (`actions/checkout`, `actions/cache`) and the Gradle wrapper are updated via the open PRs listed in the repository.
