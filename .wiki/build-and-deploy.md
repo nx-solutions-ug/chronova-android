@@ -153,6 +153,8 @@ The `build.yml` workflow is triggered manually (`workflow_dispatch`). It sets up
 | `app-release` | 30 days |
 | `test-results` | 7 days |
 
+The remaining workflows in `.github/workflows/` handle repository automation: `omp-ci.yml` triages issues and labels/reviews PRs; `omp.yml` runs the OMP agent on demand when `/omp` is commented; `omp-fix-issue.yml` generates fixes for triaged issues; `auto-manage.yml` tags new issues with `needs-triage` and auto-assigns them to `niklasschaeffer`; and `update-wiki.yml` runs the Wiki Agent on pushes to `main` and on a daily schedule to refresh `.wiki/` and publish to the GitHub Wiki.
+
 ## Vouch merge gate
 
 Pull requests from external contributors require a vouch. Two workflows enforce this:
