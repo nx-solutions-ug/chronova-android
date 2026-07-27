@@ -175,11 +175,15 @@ class NewPagerFragment : Fragment(R.layout.fragment_new_pager) {
 
 External contributors must be **vouched** before a pull request can be merged. The `vouch-pr.yml` workflow runs on every PR and uses the `mitchellh/vouch` action to check the `.github/VOUCHED.td` list. If the PR author is not vouched, the workflow closes the PR. Write access collaborators and `[bot]` accounts are automatically allowed.
 
-To request a vouch, open a **Discussion** describing your proposed contribution and ask a maintainer to comment `!vouch`. Maintainers use the `vouch-manage.yml` workflow to manage `.github/VOUCHED.td` via discussion comments (`!vouch`, `!denounce`, `!unvouch`). See [`CONTRIBUTING.md`](../CONTRIBUTING.md) for the full process.
+To request a vouch, open a **Discussion** describing your proposed contribution and ask a maintainer to comment `!vouch`. Maintainers use the `vouch-manage.yml` workflow to manage `.github/VOUCHED.td` via discussion comments (`!vouch`, `!denounce`, `!unvouch`). See [`CONTRIBUTING.md`](../CONTRIBUTING.md) and [Build & Deploy](./build-and-deploy.md) for the full process.
 
 ## 13. Renovate / dependency PRs
 
 Dependency updates are handled by Renovate. Workflow action updates (for example `actions/checkout` and `actions/cache`) are tracked in the repository and should not be duplicated manually. Renovate PRs are reviewed by the OMP agent in `omp-ci.yml`.
+
+### `/omp` commands on pull requests
+
+The `omp.yml` workflow listens for comments containing `/omp` on issues and PR review comments. Named command files under `.omp/commands/` (for example `/label-pr`) are expanded inline with `$ARGUMENTS` substitution. For **freeform prompts on PRs**, the workflow appends the instructions from `.omp/commands/_pr-commit-push.md` so the agent must check out the PR branch, apply the requested changes, and push a commit back to that branch instead of ending its turn unstaged.
 
 For the shorter agent quick-reference, see [`AGENTS.md`](../AGENTS.md).
 

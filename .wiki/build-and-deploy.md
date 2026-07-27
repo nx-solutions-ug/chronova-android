@@ -160,11 +160,15 @@ Pull requests from external contributors require a vouch. Two workflows enforce 
 - `vouch-pr.yml` — runs on opened/reopened/ready PRs, checks `.github/VOUCHED.td` via `mitchellh/vouch`, and auto-closes unvouched PRs. It also applies the `vouched` label when the check passes.
 - `vouch-manage.yml` — lets maintainers manage `.github/VOUCHED.td` through Discussion comments (`!vouch`, `!denounce`, `!unvouch`).
 
-Write access collaborators and bot accounts are automatically allowed. See `CONTRIBUTING.md` and [Development Conventions](./development-conventions.md) for the contribution process.
+Write access collaborators and bot accounts are automatically allowed. See [`CONTRIBUTING.md`](../CONTRIBUTING.md) and [Development Conventions](./development-conventions.md) for the contribution process.
 
 ## Renovate
 
 Dependency updates are managed by Renovate, configured in `renovate.json`. Major workflow actions (`actions/checkout`, `actions/cache`) and the Gradle wrapper are updated via the open PRs listed in the repository.
+
+### Wiki update workflow
+
+The `update-wiki.yml` workflow runs the Wiki Agent daily and on pushes to `main`. It publishes the flattened `.wiki/` content to the associated GitHub Wiki repo and, when there are changes, opens a staging pull request from a `wiki/staging-<timestamp>` branch that contains only the `.wiki/` updates.
 
 ## Troubleshooting
 
