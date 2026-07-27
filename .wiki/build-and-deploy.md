@@ -9,7 +9,7 @@ tags: [build, gradle, docker, release]
 
 ## Build environment
 
-- **Gradle**: 9.2.1 (wrapper distribution)
+- **Gradle**: 9.6.1 (wrapper distribution)
 - **Android Gradle Plugin**: 8.13.2
 - **Kotlin**: 2.1.20
 - **Compile / Target SDK**: 36
