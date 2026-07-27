@@ -145,13 +145,56 @@ This removes the root `buildDir`.
 
 ## CI/CD
 
-The `build.yml` workflow is triggered manually (`workflow_dispatch`). It sets up JDK 17, installs the Android SDK, runs unit tests, builds both debug and release APKs, and uploads them as artifacts with the following retention:
+GitHub Actions workflows live in `.github/workflows/`.
+
+### `build.yml` — manual build + test
+
+Triggered by `workflow_dispatch`. It sets up JDK 17, installs the Android SDK, runs `./gradlew testDebugUnitTest`, builds both debug and release APKs, and uploads them as artifacts:
 
 | Artifact | Retention |
 |----------|-----------|
 | `app-debug` | 7 days |
 | `app-release` | 30 days |
 | `test-results` | 7 days |
+
+### `omp-ci.yml` — OMP agent triage, labeling, and review
+
+Runs on issue creation and on PR `opened`, `synchronize`, and `ready_for_review`. It has three jobs:
+
+- **triage-issue** — classifies new issues, applies labels, sets issue type/priority fields, and dispatches `omp-fix-issue.yml`.
+- **label-pr** — classifies PRs with a type label (`bug`, `feature`, `enhancement`, `docs`, `chore`) and a priority label (`priority: critical`, `priority: high`, `priority: medium`, `priority: low`). Skips if both are already present.
+- **review-pr** — reviews PRs using the OMP agent. It installs the `agynio/gh-pr-review` extension so it can post inline review comments on specific diff lines, and skips re-review when the latest synchronized commit was authored by a bot or agent.
+
+All OMP jobs authenticate via a GitHub App token (`secrets.APP_CLIENT_ID` / `secrets.APP_PRIVATE_KEY`) and use the `ollama-cloud/minimax-m3` model.
+
+### `omp.yml` — on-demand `/omp` commands
+
+Triggered by issue or PR review comments containing `/omp` (or starting with it). It expands a command template from `.omp/commands/${CMD_NAME}.md` and runs the OMP agent. This workflow also installs the `agynio/gh-pr-review` extension so review commands can leave inline comments.
+
+### `omp-fix-issue.yml` — automated issue fixing
+
+Triggered by a repository dispatch event `issue-triaged` from `omp-ci.yml`, or manually via `workflow_dispatch`. It reads `.omp/commands/fix-issue.md`, creates a branch, attempts a minimal fix, and opens a PR.
+
+### `auto-manage.yml` — issue/PR housekeeping
+
+- Tags newly opened/reopened issues with `needs-triage`.
+- Auto-assigns newly opened issues and PRs to `niklasschaeffer`.
+
+### `vouch-pr.yml` — PR trust gate
+
+Runs on `pull_request_target` for `opened`, `reopened`, and `ready_for_review`. Uses the `mitchellh/vouch` action to close PRs from unvouched users. Bot accounts and collaborators with write access are automatically allowed. PRs that pass are labeled `vouched`.
+
+### `vouch-manage.yml` — vouch management via discussions
+
+Runs on discussion comments. Maintainers with `admin`, `maintain`, or `write` roles can vouch or denounce users with `!vouch`, `!denounce`, or `!unvouch`. The vouched list is maintained in `.github/VOUCHED.td`.
+
+### `update-wiki.yml` — wiki update pipeline
+
+Triggered on pushes to `main`, on a daily schedule (`0 8 * * *`), and manually. It installs the `@chronova/wiki-agent`, runs the agent to update `.wiki`, flattens the output, pushes the result to the repository's wiki repo, and opens a staging PR with the `.wiki` changes.
+
+## Release notes
+
+`.github/release-drafter.yml` categorizes merged PRs into Features, Bug Fixes, Maintenance, and Dependencies based on labels, and drafts the next release version from label-driven semver resolution.
 
 ## Renovate
 
