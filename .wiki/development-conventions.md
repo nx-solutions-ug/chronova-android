@@ -171,13 +171,19 @@ class NewPagerFragment : Fragment(R.layout.fragment_new_pager) {
 }
 ```
 
+## 12. Vouch gate
+
+External contributors must be **vouched** before a pull request can be merged. The `vouch-pr.yml` workflow runs on every PR and uses the `mitchellh/vouch` action to check the `.github/VOUCHED.td` list. If the PR author is not vouched, the workflow closes the PR. Write access collaborators and `[bot]` accounts are automatically allowed.
+
+To request a vouch, open a **Discussion** describing your proposed contribution and ask a maintainer to comment `!vouch`. Maintainers use the `vouch-manage.yml` workflow to manage `.github/VOUCHED.td` via discussion comments (`!vouch`, `!denounce`, `!unvouch`). See [`CONTRIBUTING.md`](../CONTRIBUTING.md) for the full process.
+
 ## 13. Renovate / dependency PRs
 
 Dependency updates are handled by Renovate. Workflow action updates (for example `actions/checkout` and `actions/cache`) are tracked in the repository and should not be duplicated manually. Renovate PRs are reviewed by the OMP agent in `omp-ci.yml`.
 
 For the shorter agent quick-reference, see [`AGENTS.md`](../AGENTS.md).
 
-## 12. Adding a new repository API group
+## 14. Adding a new repository API group
 
 When you add a server endpoint:
 
