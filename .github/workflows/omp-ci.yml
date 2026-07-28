@@ -4,7 +4,7 @@ on:
   issues:
     types: [ opened ]
   pull_request:
-    types: [ opened, synchronize, ready_for_review ]
+    types: [ opened, synchronize, ready_for_review, closed ]
   workflow_dispatch:
     inputs:
       pr_number:
@@ -293,3 +293,76 @@ jobs:
         run: |
           EXPANDED=$(sed 's/\$ARGUMENTS/${{ github.event.pull_request.number || github.event.inputs.pr_number }}/g' .omp/commands/review-pr.md)
           omp -p --model ollama-cloud/minimax-m3 --mode json "$EXPANDED" | python3 .omp/stream-log.py
+
+  cancel-review-on-close:
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - name: Cancel running review-pr workflow
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const { data: runs } = await github.rest.actions.listWorkflowRunsForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              event: 'pull_request',
+              status: 'in_progress',
+              branch: context.payload.pull_request.head.ref,
+            });
+            const targetGroup = `omp-review-${context.payload.pull_request.number}`;
+            for (const run of runs.data.workflow_runs) {
+              const runJobs = await github.rest.actions.listJobsForWorkflowRun({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                run_id: run.id,
+              });
+              const inGroup = runJobs.data.jobs.some(job =>
+                job.name === 'review-pr' &&
+                run.head_branch === context.payload.pull_request.head.ref
+              );
+              if (inGroup) {
+                await github.rest.actions.cancelWorkflowRun({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  run_id: run.id,
+                });
+              }
+            }
+
+  cancel-label-on-close:
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - name: Cancel running label-pr workflow
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const { data: runs } = await github.rest.actions.listWorkflowRunsForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              event: 'pull_request',
+              status: 'in_progress',
+              branch: context.payload.pull_request.head.ref,
+            });
+            for (const run of runs.data.workflow_runs) {
+              const runJobs = await github.rest.actions.listJobsForWorkflowRun({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                run_id: run.id,
+              });
+              const inGroup = runJobs.data.jobs.some(job =>
+                job.name === 'label-pr' &&
+                run.head_branch === context.payload.pull_request.head.ref
+              );
+              if (inGroup) {
+                await github.rest.actions.cancelWorkflowRun({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  run_id: run.id,
+                });
+              }
+            }
