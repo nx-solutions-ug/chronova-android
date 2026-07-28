@@ -145,6 +145,11 @@ This removes the root `buildDir`.
 
 ## CI/CD
 
+The full automation surface — every workflow, the OMP agent, the vouch
+system, Renovate, Release Drafter, and the wiki pipeline — is documented
+under [CI/CD & Automation](./ci-cd/index.md). The summary below covers
+the build workflow.
+
 The `build.yml` workflow is triggered manually (`workflow_dispatch`). It sets up JDK 17, installs the Android SDK, runs unit tests, builds both debug and release APKs, and uploads them as artifacts with the following retention:
 
 | Artifact | Retention |
@@ -160,11 +165,13 @@ Pull requests from external contributors require a vouch. Two workflows enforce 
 - `vouch-pr.yml` — runs on opened/reopened/ready PRs, checks `.github/VOUCHED.td` via `mitchellh/vouch`, and auto-closes unvouched PRs. It also applies the `vouched` label when the check passes.
 - `vouch-manage.yml` — lets maintainers manage `.github/VOUCHED.td` through Discussion comments (`!vouch`, `!denounce`, `!unvouch`).
 
-Write access collaborators and bot accounts are automatically allowed. See `CONTRIBUTING.md` and [Development Conventions](./development-conventions.md) for the contribution process.
+Write access collaborators and bot accounts are automatically allowed. See `CONTRIBUTING.md`, [Development Conventions](./development-conventions.md), and the full
+[Vouch System](./ci-cd/vouch-system.md) page for the contribution process.
 
 ## Renovate
 
-Dependency updates are managed by Renovate, configured in `renovate.json`. Major workflow actions (`actions/checkout`, `actions/cache`) and the Gradle wrapper are updated via the open PRs listed in the repository.
+Dependency updates are managed by Renovate, configured in `renovate.json`. Major workflow actions (`actions/checkout`, `actions/cache`) and the Gradle wrapper are updated via the open PRs listed in the repository. Renovate PRs are reviewed by the OMP agent — see
+[OMP Agent](./ci-cd/omp-agent.md#omp-ciyml) and the `review-pr` job.
 
 ## Troubleshooting
 

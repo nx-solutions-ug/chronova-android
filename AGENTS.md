@@ -255,3 +255,16 @@ GitHub Actions workflows in `.github/workflows/`:
 - **PRO status**: `MainPagerFragment` dynamically adjusts tab count based on PRO subscription (more tabs for PRO users).
 - **WakaTime compatibility**: API models reference WakaTime-style responses; the Chronova server API mirrors WakaTime's structure.
 - **Signing credentials are hardcoded**: `storePassword: 'chronova123'`, `keyPassword: 'chronova123'`, `keyAlias: 'chronova'` in `app/build.gradle`. Keystore file is committed to the repo.
+
+<!-- wiki-agent -->
+## Wiki Agent
+
+This repository is managed by [wiki-agent](https://github.com/nx-solutions-ug/wiki-agent).
+Documentation is generated under `.wiki/` and kept in sync via `wiki --update`.
+Do not hand-edit files under `.wiki/` — regenerate them with `wiki --update` instead.
+
+```yaml
+version: 1.13.1
+wiki-path: .wiki/
+initialized: 2026-07-28T07:50:47.005Z
+```

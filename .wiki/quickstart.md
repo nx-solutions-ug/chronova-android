@@ -73,4 +73,6 @@ This builds `chronova-android-builder` from `Dockerfile.build`, runs `./gradlew 
 ## Next steps
 
 - Read [Architecture Overview](./architecture/overview.md) to understand the layers.
+- Read [Data Flow & Sequences](./architecture/data-flow.md) for the actual request sequences behind the screens.
 - Read [Development Conventions](./development-conventions.md) before making code changes.
+- New to the repo? Start with [Onboarding](./onboarding.md).

@@ -119,3 +119,5 @@ class MyFragment : Fragment(R.layout.fragment_my) {
 ```
 
 See [Development Conventions](./development-conventions.md) for the full rules.
+The screen-by-screen call sequences — login, dashboard, leaderboard,
+goals, PRO update — are in [Data Flow & Sequences](./architecture/data-flow.md).

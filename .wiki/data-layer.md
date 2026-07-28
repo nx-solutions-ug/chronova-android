@@ -139,4 +139,13 @@ UI callers should handle both branches with `Result.fold(onSuccess, onFailure)`.
 
 ## Continuous integration
 
-The `build.yml` workflow runs `testDebugUnitTest`, `assembleDebug`, and `assembleRelease` on every manual trigger. For the full automation stack — including the OMP agent that triages issues, labels/reviews PRs, and the wiki update pipeline — see [Build & Deploy](./build-and-deploy.md).
+The `build.yml` workflow runs `testDebugUnitTest`, `assembleDebug`, and
+`assembleRelease` on every manual trigger. For the full automation
+stack — including the OMP agent that triages issues, labels/reviews
+PRs, the vouch gate, and the wiki update pipeline — see
+[CI/CD & Automation](./ci-cd/index.md).
+
+## Endpoint reference
+
+The full endpoint surface, request/response shapes, and the WakaTime
+field mapping are in [Server API](./api/index.md).
