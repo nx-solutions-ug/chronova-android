@@ -55,7 +55,7 @@
                 android:layout_height="36dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_goals"
-                android:tint="@color/error"
+                app:tint="@color/error"
                 android:contentDescription="Delete goal" />
 
         </LinearLayout>

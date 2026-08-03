@@ -15,7 +15,10 @@
         <item name="colorOnBackground">@color/text_primary</item>
         <item name="colorOnSurface">@color/text_primary</item>
         <item name="colorOnError">@android:color/white</item>
-        
+
+        <!-- Readable defaults for text inputs (fixes unreadable dark-blue-on-grey). -->
+        <item name="textInputStyle">@style/Chronova.TextInputLayout</item>
+        <item name="editTextStyle">@style/Chronova.TextInputEditText</item>
         <!-- Status bar configuration -->
         <item name="android:windowTranslucentStatus">false</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
