@@ -120,6 +120,11 @@ data class LoginRequest(
     val password: String
 )
 
+data class MobileExchangeRequest(
+    @SerializedName("token")
+    val token: String
+)
+
 data class LoginResponse(
     @SerializedName("message")
     val message: String,
