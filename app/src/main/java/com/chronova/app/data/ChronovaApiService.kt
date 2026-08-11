@@ -8,6 +8,9 @@ interface ChronovaApiService {
     @POST("api/auth/login")
     suspend fun login(@Body request: LoginRequest): Response<LoginResponse>
     
+    @POST("api/auth/mobile-exchange")
+    suspend fun exchangeMobileToken(@Body request: MobileExchangeRequest): Response<LoginResponse>
+    
     @GET("api/v1/users/current/stats/{range}")
     suspend fun getStats(
         @Header("Authorization") authorization: String,

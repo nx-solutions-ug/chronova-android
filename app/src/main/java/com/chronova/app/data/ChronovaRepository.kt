@@ -7,15 +7,17 @@ import retrofit2.Response
 class ChronovaRepository(context: Context) {
 
     private val prefs: SharedPreferences = context.getSharedPreferences("chronova_prefs", Context.MODE_PRIVATE)
+    private val securePrefs = SecurePreferences(context)
     private val apiService = ApiClient.apiService
 
     fun saveApiKey(apiKey: String) {
-        prefs.edit().putString("api_key", apiKey).apply()
+        securePrefs.putString("api_key", apiKey)
     }
 
     fun getApiKey(): String? {
-        return prefs.getString("api_key", null)
+        return securePrefs.getString("api_key")
     }
+
 
     fun saveServerUrl(serverUrl: String) {
         prefs.edit().putString("server_url", serverUrl).apply()
@@ -40,7 +42,8 @@ class ChronovaRepository(context: Context) {
     }
 
     fun clearAuth() {
-        prefs.edit().remove("api_key").remove("user_id").apply()
+        securePrefs.remove("api_key")
+        prefs.edit().remove("user_id").apply()
     }
 
     fun getUserId(): String? {
@@ -65,6 +68,26 @@ class ChronovaRepository(context: Context) {
                 Result.success(response.body()!!)
             } else {
                 Result.failure(Exception("Login failed: ${response.message()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun exchangeMobileToken(token: String): Result<LoginResponse> {
+        return try {
+            val response = apiService.exchangeMobileToken(MobileExchangeRequest(token))
+            if (response.isSuccessful && response.body() != null) {
+                val loginResponse = response.body()!!
+                loginResponse.user?.let { user ->
+                    prefs.edit().putString("user_id", user.id).apply()
+                }
+                loginResponse.apiKey?.let { apiKey ->
+                    saveApiKey(apiKey)
+                }
+                Result.success(loginResponse)
+            } else {
+                Result.failure(Exception("Token exchange failed: ${response.message()}"))
             }
         } catch (e: Exception) {
             Result.failure(e)
