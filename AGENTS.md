@@ -241,7 +241,7 @@ GitHub Actions workflows in `.github/workflows/`:
 | Workflow | Trigger | Purpose |
 |----------|---------|---------|
 | `build.yml` | Manual (`workflow_dispatch`) | JDK 17 + Android SDK setup, `testDebugUnitTest`, `assembleDebug`, `assembleRelease`, uploads APK artifacts (7-day debug, 30-day release retention) |
-| `omp-ci.yml` | Issues opened, PR opened/synchronize/ready_for_review | OMP agent triages issues, labels PRs (type + priority), reviews PRs. Skips re-review for agent-authored commits. Uses model `ollama-cloud/minimax-m3` |
+| `omp-ci.yml` | Issues opened, PR opened/synchronize/ready_for_review | OMP agent triages issues, labels PRs (type + priority), reviews PRs. Skips re-review for agent-authored commits. Uses model `ollama-cloud/glm-5.3-flash` |
 | `omp.yml` | Issue/PR comments containing `/omp` | OMP agent execution on-demand via comments. Expands `.omp/commands/*.md` templates |
 | `auto-manage.yml` | Issues opened/reopened, PRs opened | Tags issues `needs-triage`, auto-assigns to `niklasschaeffer` |
 
