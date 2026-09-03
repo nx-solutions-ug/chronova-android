@@ -241,11 +241,12 @@ GitHub Actions workflows in `.github/workflows/`:
 | Workflow | Trigger | Purpose |
 |----------|---------|---------|
 | `build.yml` | Manual (`workflow_dispatch`) | JDK 17 + Android SDK setup, `testDebugUnitTest`, `assembleDebug`, `assembleRelease`, uploads APK artifacts (7-day debug, 30-day release retention) |
-| `omp-ci.yml` | Issues opened, PR opened/synchronize/ready_for_review | OMP agent triages issues, labels PRs (type + priority), reviews PRs. Skips re-review for agent-authored commits. Uses model `ollama-cloud/glm-5.3-flash` |
+| `omp-ci.yml` | Issues opened, PR opened/ready_for_review | OMP agent triages issues, labels PRs (type + priority). Uses model `ollama-cloud/glm-5.3-flash:max` |
+| `omp-code-review.yml` | PR opened/synchronize/ready_for_review/review_requested, review comments, manual dispatch | OMP agent reviews PRs: dependency reviews for renovate/dependabot PRs, full code review with thread resolution otherwise. Skips re-review for agent-authored commits. Uses model `ollama-cloud/glm-5.3-flash:max` |
 | `omp.yml` | Issue/PR comments containing `/omp` | OMP agent execution on-demand via comments. Expands `.omp/commands/*.md` templates |
 | `auto-manage.yml` | Issues opened/reopened, PRs opened | Tags issues `needs-triage`, auto-assigns to `niklasschaeffer` |
 
-**OMP agent**: Installed via `curl -fsSL https://omp.sh/install | sh` in CI. Command templates in `.omp/commands/` (e.g., `triage-issue.md`, `review-pr.md`, `label-pr.md`). Output formatted by `.omp/stream-log.py`.
+**OMP agent**: Installed via `curl -fsSL https://omp.sh/install | sh` in CI. Command templates in `.omp/commands/` (e.g., `triage-issue.md`, `review-pr.md`, `label-pr.md`, `dependency-review.md`). Output formatted by `.omp/stream-log.py`.
 
 **Release Drafter** (`.github/release-drafter.yml`): Categorizes PRs by label — Features, Bug Fixes, Maintenance, Dependencies.
 
