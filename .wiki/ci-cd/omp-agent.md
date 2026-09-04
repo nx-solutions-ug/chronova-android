@@ -1,7 +1,7 @@
 ---
 type: ci-cd
 title: OMP Agent
-description: The OMP (opencode agent) workflows: triage, label, review, and on-demand execution.
+description: "The OMP (opencode agent) workflows: triage, label, review, and on-demand execution."
 tags: [ci-cd, omp, agent, automation, llm]
 ---
 

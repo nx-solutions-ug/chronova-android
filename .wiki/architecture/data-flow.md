@@ -1,7 +1,7 @@
 ---
 type: architecture
 title: Data Flow & Sequences
-description: End-to-end traces of the major user flows: login, dashboard load, leaderboard, goals, and PRO-gated tabs.
+description: "End-to-end traces of the major user flows: login, dashboard load, leaderboard, goals, and PRO-gated tabs."
 tags: [architecture, data-flow, sequences, coroutines]
 ---
 
