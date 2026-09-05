@@ -1,8 +1,11 @@
 ---
 type: ci-cd
 title: Wiki Pipeline
-description: How the wiki under .wiki/ is generated, staged, and published to the GitHub Wiki tab.
-tags: [ci-cd, wiki, github-actions, docs]
+description: How the wiki under .wiki/ is generated, staged, and published to
+  the GitHub Wiki tab.
+tags: [ ci-cd, wiki, github-actions, docs ]
+last_updated: 2026-09-04T18:43:45.671Z
+updated_by: wiki-agent
 ---
 
 # Wiki Pipeline
@@ -79,7 +82,7 @@ older snapshots.
 
 `WIKI_OLLAMA_MODE=cloud` selects the OMP cloud provider. The
 `WIKI_OLLAMA_API_KEY` secret is required. The model is controlled by
-the `WIKI_MODEL` variable (default `kimi-k2.7-code`).
+the `WIKI_MODEL` variable (default `glm-5.3-flash`).
 
 ## Required secrets
 

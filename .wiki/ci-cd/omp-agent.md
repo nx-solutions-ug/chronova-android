@@ -1,8 +1,11 @@
 ---
 type: ci-cd
 title: OMP Agent
-description: "The OMP (opencode agent) workflows: triage, label, review, and on-demand execution."
-tags: [ci-cd, omp, agent, automation, llm]
+description: "The OMP (opencode agent) workflows: triage, label, review, and
+  on-demand execution."
+tags: [ ci-cd, omp, agent, automation, llm ]
+last_updated: 2026-09-04T18:43:43.595Z
+updated_by: wiki-agent
 ---
 
 # OMP Agent
@@ -10,7 +13,7 @@ tags: [ci-cd, omp, agent, automation, llm]
 OMP ("opencode agent") is the project's LLM-driven automation. It is
 installed in CI from `https://omp.sh/install`, configured with an
 `ollama-cloud` provider, and run with the model
-`ollama-cloud/minimax-m3` (override via `WIKI_MODEL` for the wiki
+`ollama-cloud/glm-5.3-flash:max` (override via `WIKI_MODEL` for the wiki
 pipeline). The agent's prompt templates live in `.omp/commands/`, and
 its runtime is wrapped by `.omp/stream-log.py` for clean streaming logs.
 
@@ -42,7 +45,7 @@ Steps:
 6. Insert the `ollama-cloud` credential into `~/.omp/agent/agent.db`.
 7. `omp models refresh ollama-cloud > /dev/null 2>&1` to populate the model list.
 8. Expand `.omp/commands/triage-issue.md` by replacing `$ARGUMENTS` with
-   the issue number, then run `omp --model ollama-cloud/minimax-m3 -p --mode json <prompt>`.
+the issue number, then run `omp --model ollama-cloud/glm-5.3-flash:max -p --mode json <prompt>`.
 9. Stream the JSON through `.omp/stream-log.py` for a clean log.
 10. On completion (success or failure), dispatch the `issue-triaged`
     repository event so `omp-fix-issue.yml` can pick it up.
@@ -81,7 +84,7 @@ The handler:
    For PR comments it appends `.omp/commands/_pr-commit-push.md` so the
    agent commits and pushes its changes back to the PR branch instead
    of just staging them.
-4. Runs `omp -p --model ollama-cloud/minimax-m3 --mode json <prompt>` and
+4. Runs `omp -p --model ollama-cloud/glm-5.3-flash:max --mode json <prompt>` and
    streams the result through `.omp/stream-log.py`.
 
 The agent is **not** triggered by `[bot]` comments.
