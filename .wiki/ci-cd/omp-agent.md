@@ -4,7 +4,7 @@ title: OMP Agent
 description: "The OMP (opencode agent) workflows: triage, label, review, and
   on-demand execution."
 tags: [ ci-cd, omp, agent, automation, llm ]
-last_updated: 2026-09-04T18:43:43.595Z
+last_updated: 2026-09-07T17:08:11.320Z
 updated_by: wiki-agent
 ---
 
@@ -21,9 +21,14 @@ The configuration (`.omp/config.yml`, `.omp/rules/`, `.omp/commands/`,
 `.omp/stream-log.py`) is the agent's contract. Read it before adding new
 commands or behaviour.
 
+The workflows: `omp-ci.yml` (issue triage + PR labels), `omp-code-review.yml`
+(dependency and code review), `omp.yml` (on-demand `/omp` comments), and
+`omp-fix-issue.yml` (automated issue fixes).
+
 ## `omp-ci.yml`
 
-This workflow runs the agent in three modes. Each is a separate job with
+This workflow runs the agent in two modes (PR **review** lives in its own
+workflow, [`omp-code-review.yml`](#omp-code-reviewyml)). Each job has
 its own concurrency group keyed on the issue/PR number.
 
 ### `triage-issue`
@@ -54,27 +59,60 @@ the issue number, then run `omp --model ollama-cloud/glm-5.3-flash:max -p --mode
 
 | Field | Value |
 |-------|-------|
-| Trigger | PR opened / synchronize / ready_for_review |
+| Trigger | PR opened / ready_for_review |
 | Concurrency | `omp-label-<number>`, cancel-in-progress |
 | Skip check | If the PR already has a `type` (`bug`, `feature`, `enhancement`, `docs`, `chore`) **and** a `priority:` label, the job short-circuits. |
 | Command | `.omp/commands/label-pr.md` |
 
-### `review-pr`
+When the PR is **closed**, a `cancel-label-on-close` job cancels any
+still-running `label-pr` run for that branch.
+
+## `omp-code-review.yml`
+
+The PR review agent lives in this dedicated workflow ("OMP Code
+Review"). It has two jobs:
 
 | Field | Value |
 |-------|-------|
-| Trigger | PR opened (and subsequent non-closed events); manual dispatch with `pr_number` |
-| Concurrency | `omp-review-<number>`, cancel-in-progress: false (reviews should not cancel) |
-| Skip check (synchronize only) | If the head commit's author/committer matches an agent identity (`opencode-agent`, `opencode`, `github-actions`, `omp-agent`, `chronova-agent`), the re-review is skipped. |
-| Prefix | For Dependabot/Renovate authors the prompt is prefixed `dep:`; for `[bot]` or `opencode-agent` authors it is `bot:`; otherwise no prefix. |
-| Extensions | `agynio/gh-pr-review` for inline comments. |
+| Trigger | PR opened / synchronize / ready_for_review / review_requested; review submitted; review comment created; manual dispatch with `pr_number` |
+| Concurrency | `omp-code-review-<number>`; cancel-in-progress for PR and dispatch events |
+| Extensions | `agynio/gh-pr-review` (pinned v1.6.2) for inline comments |
 
-The review command is selected by `${{ steps.review-type.outputs.prefix }}<cmd>.md`
-from `.omp/commands/`.
+### `dependency-review`
+
+Runs only when the PR author is `renovate[bot]` or `dependabot[bot]`.
+Runs `.omp/commands/dependency-review.md` and then verifies the agent
+actually posted a review or comment — otherwise the job fails.
+
+### `code-review`
+
+Full code-quality review using `.omp/commands/review-pr.md`:
+
+- **Triggers**: PR events (except `review_requested` from non-review
+  flows), manual dispatch, and — as a retrigger — review submissions or
+  review comments authored by "jules" (`google-labs-jules[bot]`).
+- **Jules handling**: a detection step classifies the event as
+  `jules-authored-pr`, `jules-review-submitted`, or
+  `jules-review-comment` and passes it to the agent as context.
+- **Skip rule (synchronize only)**: if the pushed head commit's
+  author/committer matches an agent identity (`opencode-agent`,
+  `opencode`, `github-actions`, `omp-agent`, `chronova-agent`), the
+  re-review is skipped. `review_requested` never skips.
+- **Checkout**: full history (`fetch-depth: 0`) so the diff against the
+  base branch works for large PRs.
+- **Verification**: after the review runs, the job counts unresolved
+  review threads and agent reviews; if both are zero it fails the run
+  (unless the PR modifies the review workflow itself, in which case
+  verification is skipped by design).
 
 ## `omp.yml`
 
-Triggered when a comment on an issue or PR contains `/omp` (or `/oc`).
+| Field | Value |
+|-------|-------|
+| Trigger | Issue comments created; PR review comments created |
+| Skip check | Comments from `[bot]` users are ignored; the body must contain or start with `/omp` (or `/oc`) |
+| Concurrency | `omp-agent-<number>`, cancel-in-progress: false |
+
 The handler:
 
 1. Extracts the prompt by stripping the leading `/omp` or `/oc`.
@@ -92,8 +130,9 @@ The agent is **not** triggered by `[bot]` comments.
 ## `omp-fix-issue.yml`
 
 Triggered by the `issue-triaged` repository_dispatch event sent at the
-end of `triage-issue`. It runs an agent command to attempt an automated
-fix for the triaged issue and opens a follow-up PR.
+end of `triage-issue` (or manually with `issue_number`). It expands
+`.omp/commands/fix-issue.md` to attempt an automated fix for the
+triaged issue and opens a follow-up PR.
 
 ## Output streaming
 
@@ -110,7 +149,9 @@ Templates live in `.omp/commands/`:
 |------|---------|
 | `triage-issue.md` | `omp-ci.yml` → `triage-issue` |
 | `label-pr.md` | `omp-ci.yml` → `label-pr` |
-| `review-pr.md` (plus `dep:` / `bot:` variants) | `omp-ci.yml` → `review-pr` |
+| `review-pr.md` | `omp-code-review.yml` → `code-review` |
+| `dependency-review.md` | `omp-code-review.yml` → `dependency-review` |
+| `fix-issue.md` | `omp-fix-issue.yml` |
 | `*.md` (any other) | `omp.yml` when the comment starts with `/omp <name>` |
 | `_pr-commit-push.md` | Appended to freeform `/omp` prompts on PRs. |
 

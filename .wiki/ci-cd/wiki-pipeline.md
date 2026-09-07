@@ -4,7 +4,7 @@ title: Wiki Pipeline
 description: How the wiki under .wiki/ is generated, staged, and published to
   the GitHub Wiki tab.
 tags: [ ci-cd, wiki, github-actions, docs ]
-last_updated: 2026-09-04T18:43:45.671Z
+last_updated: 2026-09-07T17:06:28.396Z
 updated_by: wiki-agent
 ---
 
@@ -36,8 +36,9 @@ The pipeline runs on three triggers:
    staging branch suffix.
 6. **Diff detection** — `git status --porcelain .wiki` collects the
    list of changed files. The run metadata files
-   (`.wiki/.last-update-report.md`, `.wiki/.last-updated.json`) are
-   excluded so a no-op content change does not open a PR.
+   (`.wiki/.last-update-report.md`, `.wiki/.last-update-title.txt`,
+   `.wiki/.last-updated.json`) are excluded so a no-op content change
+   does not open a PR.
 7. **Wiki initialization check** — `git ls-remote` against the
    `<owner>/<repo>.wiki.git` repo. If the wiki repo has never been
    initialized the workflow posts a warning and the staging PR still
@@ -55,8 +56,9 @@ The pipeline runs on three triggers:
      non-zero so the failure is visible.
 9. **Staging PR** — `peter-evans/create-pull-request@v8` opens a PR
    with branch `wiki/staging-<timestamp>` (e.g. `wiki/staging-1731417600`),
-   title `docs: wiki staging snapshot`, body the report from
-   `.wiki/.last-update-report.md`, and `--add-paths .wiki`.
+   title (and commit message) from `.wiki/.last-update-title.txt` when
+   present (otherwise `docs: wiki staging snapshot`), body the report
+   from `.wiki/.last-update-report.md`, and `--add-paths .wiki`.
 
 The staging PR is the human review surface. Once merged, the next run
 that detects content changes will re-publish to the wiki repo.

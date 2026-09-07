@@ -4,7 +4,7 @@ title: Onboarding
 description: A first-day walkthrough of the Chronova Android repository, the
   local setup, and the conventions you must follow.
 tags: [ onboarding, setup, contributing ]
-last_updated: 2026-09-07T14:00:21.385Z
+last_updated: 2026-09-07T17:07:47.830Z
 updated_by: wiki-agent
 ---
 
@@ -35,7 +35,8 @@ Required toolchain:
 
 - **Android Studio Ladybug (2024.2.1)** or newer.
 - **JDK 17** (`JAVA_HOME` must point at it).
-- **Android SDK** with API 36 platform and build-tools 34.0.0.
+- **Android SDK** with the API 37 compile platform (target SDK is 36)
+  and build-tools 34.0.0.
 
 Then:
 
@@ -115,8 +116,9 @@ git push origin feature/<short-description>
 ### 4d. Open the PR
 
 The OMP agent will automatically label (`label-pr` job in
-[omp-ci.yml](./ci-cd/omp-agent.md#omp-ciyml)) and review (`review-pr`)
-your PR. A maintainer will perform the final review.
+[omp-ci.yml](./ci-cd/omp-agent.md#omp-ciyml)) and review (`code-review`
+job in `omp-code-review.yml`) your PR. A maintainer will perform the
+final review.
 
 ## 5. Code map to learn
 
