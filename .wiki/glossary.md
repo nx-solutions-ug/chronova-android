@@ -3,7 +3,7 @@ type: glossary
 title: Glossary
 description: Domain terms and acronyms used throughout the codebase and this wiki.
 tags: [ glossary, terms, definitions ]
-last_updated: 2026-09-07T14:00:01.583Z
+last_updated: 2026-09-07T17:05:55.836Z
 updated_by: wiki-agent
 ---
 
@@ -104,7 +104,7 @@ The string tokens used as `range` query values and as fragment arguments:
 
 | Term | Meaning |
 |------|---------|
-| **AGP** | Android Gradle Plugin. Currently `8.13.2`. |
+| **AGP** | Android Gradle Plugin. Currently `9.4.0`. |
 | **`org.gradle.caching=false`** | Build cache is intentionally disabled in `gradle.properties` so every build is fresh. |
 | **`FAIL_ON_PROJECT_REPOS`** | The `RepositoriesMode` set in `settings.gradle` — module-level repository declarations are an error. |
 | **Release keystore** | `chronova-release-key.keystore` in the repo root. Passwords `chronova123` for both store and key. Not safe for production reuse. |

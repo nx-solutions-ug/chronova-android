@@ -3,7 +3,7 @@ type: quickstart
 title: Quickstart
 description: Build, install, and run the Chronova Android app for the first time.
 tags: [ quickstart, build, install ]
-last_updated: 2026-09-07T13:59:55.702Z
+last_updated: 2026-09-07T17:06:18.943Z
 updated_by: wiki-agent
 ---
 
@@ -15,7 +15,7 @@ Get the Chronova Android app running on a device or emulator.
 
 - Android Studio Ladybug (2024.2.1) or newer.
 - JDK 17 or higher.
-- Android SDK API 36.
+- Android SDK with the API 37 compile platform (target SDK is 36).
 - A Chronova server URL and API key, or Chronova account credentials.
 
 ## Clone the repository

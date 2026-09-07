@@ -4,7 +4,7 @@ title: Workflows
 description: Per-workflow details for the GitHub Actions that build, test, and
   release the app.
 tags: [ ci-cd, github-actions, build, release ]
-last_updated: 2026-09-07T14:00:15.088Z
+last_updated: 2026-09-07T17:08:05.344Z
 updated_by: wiki-agent
 ---
 
@@ -23,10 +23,10 @@ This page documents the workflows that build and test the APK.
 
 ### Steps
 
-1. **Checkout** (`actions/checkout@v4`).
-2. **Set up JDK 17** — `actions/setup-java@v5` with `temurin` distribution.
-3. **Setup Android SDK** — `android-actions/setup-android@v3`.
-4. **Cache Gradle packages** — caches `~/.gradle/caches` and `~/.gradle/wrapper`,
+1. **Checkout** (`actions/checkout@v7`).
+2. **Set up JDK 17** — `actions/setup-java@v6` with `temurin` distribution.
+3. **Setup Android SDK** — `android-actions/setup-android@v4`.
+4. **Cache Gradle packages** — `actions/cache@v6`, caches `~/.gradle/caches` and `~/.gradle/wrapper`,
    keyed on `runner.os` and the hash of all `*.gradle*` and
    `gradle-wrapper.properties`. Fallback restore-keys use just the OS so
    partial cache hits still warm the daemon.
@@ -36,11 +36,11 @@ This page documents the workflows that build and test the APK.
 8. **Build Release APK** — `./gradlew assembleRelease --stacktrace`.
 9. **Upload artifacts**:
 
-| Artifact | Retention |
-|----------|-----------|
-| `app-debug` | 7 days |
-| `app-release` | 30 days |
-| `test-results` | 7 days (always, even on failure) |
+| Artifact | Retention | Uploaded with |
+|----------|-----------|---------------|
+| `app-debug` | 7 days | `actions/upload-artifact@v7` |
+| `app-release` | 30 days | `actions/upload-artifact@v7` |
+| `test-results` | 7 days (always, even on failure) | `actions/upload-artifact@v7` |
 
 ### Concurrency
 
@@ -67,7 +67,7 @@ See [Wiki Pipeline](./wiki-pipeline.md) for the full flow. In short:
   PR against `main` and (if the wiki repo is initialized) pushes the
   flattened output to the GitHub wiki repo.
 
-## `omp-ci.yml`, `omp.yml`, `omp-fix-issue.yml`
+## `omp-ci.yml`, `omp.yml`, `omp-code-review.yml`, `omp-fix-issue.yml`
 
 See [OMP Agent](./omp-agent.md).
 

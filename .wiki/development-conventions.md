@@ -3,7 +3,7 @@ type: conventions
 title: Development Conventions
 description: Mandatory patterns and rules for contributing to Chronova Android.
 tags: [ conventions, viewbinding, coroutines, repository ]
-last_updated: 2026-09-07T13:59:42.914Z
+last_updated: 2026-09-07T17:07:47.831Z
 updated_by: wiki-agent
 ---
 
@@ -184,7 +184,7 @@ To request a vouch, open a **Discussion** describing your proposed contribution 
 
 ## 13. Renovate / dependency PRs
 
-Dependency updates are handled by Renovate. Workflow action updates (for example `actions/checkout` and `actions/cache`) are tracked in the repository and should not be duplicated manually. Renovate PRs are reviewed by the OMP agent in `omp-ci.yml`.
+Dependency updates are handled by Renovate. Workflow action updates (for example `actions/checkout` and `actions/cache`) are tracked in the repository and should not be duplicated manually. Renovate PRs are reviewed by the OMP agent's `dependency-review` job in `omp-code-review.yml`.
 
 For the shorter agent quick-reference, see [`AGENTS.md`](../AGENTS.md). The full
 [Onboarding](./onboarding.md) page walks through the repo and the contribution

@@ -3,7 +3,7 @@ type: build
 title: Build & Deploy
 description: Gradle commands, release signing, and Docker builds for Chronova Android.
 tags: [ build, gradle, docker, release ]
-last_updated: 2026-09-07T14:00:12.997Z
+last_updated: 2026-09-07T17:07:51.593Z
 updated_by: wiki-agent
 ---
 
@@ -13,7 +13,7 @@ updated_by: wiki-agent
 
 - **Gradle**: 9.7.1 (wrapper distribution)
 - **Android Gradle Plugin**: 9.4.0
-- **Kotlin**: 2.4.10 (with `kotlin-parcelize`)
+- **Kotlin**: 2.4.20 (with `kotlin-parcelize`)
 - **Compile SDK**: 37
 - **Target SDK**: 36
 - **Min SDK**: 24
@@ -48,6 +48,14 @@ Current versions are defined in `app/build.gradle`:
 | Tests | `junit:junit` (unit) | 4.13.2 |
 | Tests | `androidx.test.ext:junit` (instrumented) | 1.3.0 |
 | Tests | `androidx.test.espresso:espresso-core` | 3.7.0 |
+
+## Unit tests
+
+One unit test exists: `app/src/test/java/com/chronova/app/InputStyleContractTest.kt`.
+It guards the readable `TextInputLayout` / `TextInputEditText` style
+overrides added for the unreadable-inputs fix (issue #50) — see
+[Development Conventions § 8](./development-conventions.md#8-tests). Run it
+with `./gradlew testDebugUnitTest`.
 
 ## Debug build
 
@@ -177,12 +185,12 @@ Write access collaborators and bot accounts are automatically allowed. See `CONT
 
 ## Renovate
 
-Dependency updates are managed by Renovate, configured in `renovate.json`. Major workflow actions (`actions/checkout`, `actions/cache`) and the Gradle wrapper are updated via the open PRs listed in the repository. Renovate PRs are reviewed by the OMP agent — see
-[OMP Agent](./ci-cd/omp-agent.md#omp-ciyml) and the `review-pr` job.
+Dependency updates are managed by Renovate, configured in `renovate.json` (extends `config:recommended`). Major workflow actions (`actions/checkout`, `actions/cache`) and the Gradle wrapper are updated via the open PRs listed in the repository. Renovate PRs are reviewed by the OMP agent's `dependency-review` job — see
+[OMP Agent](./ci-cd/omp-agent.md#omp-code-reviewyml) and the `dependency-review` job.
 
 ## Troubleshooting
 
 - **JDK mismatch**: ensure `JAVA_HOME` points to JDK 17. The `app/build.gradle` enforces `jvmTarget = '17'`.
-- **SDK not found**: install API 36 platform and build-tools through Android Studio or `sdkmanager`.
+- **SDK not found**: install the API 37 compile SDK (target remains API 36) and build-tools through Android Studio or `sdkmanager`.
 - **Docker permission errors**: the script runs `chmod +x ./gradlew` inside the container.
 - **Missing dependency repository errors**: ensure no project-level repositories are added; `settings.gradle` uses `RepositoriesMode.FAIL_ON_PROJECT_REPOS` and declares JitPack explicitly for MPAndroidChart.
