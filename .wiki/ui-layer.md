@@ -2,7 +2,9 @@
 type: ui
 title: UI Layer
 description: Activities, fragments, navigation, charts, and the card-based dashboard.
-tags: [ui, fragments, navigation, charts]
+tags: [ ui, fragments, navigation, charts ]
+last_updated: 2026-09-07T13:59:47.102Z
+updated_by: wiki-agent
 ---
 
 # UI Layer
@@ -22,11 +24,19 @@ The UI layer follows a custom MVVM pattern: fragments own their state, use `life
 
 ### `LoginActivity`
 
-- Allows two authentication paths:
+- Allows three authentication paths:
   1. **Email + password** → calls `repository.login()` and saves the returned `apiKey`.
   2. **API key** → validates and stores the key directly.
+  3. **OAuth (Google / GitHub)** → opens the provider login in a Chrome Custom Tab, which redirects back via the `com.chronova.app://oauth/callback` deep link; the returned token is exchanged with `repository.exchangeMobileToken()`.
 - Validates and saves a custom server URL if one is provided (default remains `https://chronova.dev/`).
 - Navigates to `MainActivity` on success.
+
+OAuth details (from `LoginActivity.kt`):
+
+- The deep link is registered in `AndroidManifest.xml` on `LoginActivity` (`singleTop` launch mode; callback handled in `onNewIntent` and `onCreate`).
+- A random `nonce` is generated per launch, appended to the redirect URI, validated on callback, and persisted via `onSaveInstanceState` so process death does not break the exchange.
+- OAuth launches are debounced (1s) to prevent double launches.
+- Error codes from the server (`invalid_state`, `missing_params`, `token_exchange_failed`, `internal_error`) are mapped to user-friendly toasts.
 
 ## Fragments
 

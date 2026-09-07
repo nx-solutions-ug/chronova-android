@@ -2,7 +2,9 @@
 type: conventions
 title: Development Conventions
 description: Mandatory patterns and rules for contributing to Chronova Android.
-tags: [conventions, viewbinding, coroutines, repository]
+tags: [ conventions, viewbinding, coroutines, repository ]
+last_updated: 2026-09-07T13:59:42.914Z
+updated_by: wiki-agent
 ---
 
 # Development Conventions
@@ -110,7 +112,9 @@ Never use Kotlin unsafe casts, `@Suppress("...")` shortcuts, or type-script-styl
 
 ## 8. Tests
 
-No tests currently exist. Add them in:
+One unit test exists: `app/src/test/java/com/chronova/app/InputStyleContractTest.kt`, a contract test that guards the readable `TextInputLayout`/`TextInputEditText` style overrides in `values/styles.xml` and their wiring in `themes.xml` (regression guard for the unreadable dark-blue-on-grey input fix). Run it with `./gradlew testDebugUnitTest`.
+
+Add new tests in:
 
 - `app/src/test/` — unit tests (JUnit 4 is on the classpath).
 - `app/src/androidTest/` — instrumented tests (Espresso is on the classpath).

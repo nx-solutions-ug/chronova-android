@@ -2,7 +2,9 @@
 type: data
 title: Data Layer
 description: Repository, API client, models, authentication, and server configuration.
-tags: [data, repository, api, retrofit]
+tags: [ data, repository, api, retrofit ]
+last_updated: 2026-09-07T13:59:39.431Z
+updated_by: wiki-agent
 ---
 
 # Data Layer
@@ -17,17 +19,30 @@ The data layer is responsible for all network communication, local persistence o
 | [`ChronovaApiService.kt`](https://github.com/chronova/chronova-android/blob/main/app/src/main/java/com/chronova/app/data/ChronovaApiService.kt) | Retrofit interface defining REST endpoints. |
 | [`ApiClient.kt`](https://github.com/chronova/chronova-android/blob/main/app/src/main/java/com/chronova/app/data/ApiClient.kt) | Retrofit singleton with dynamic base URL. |
 | [`ApiModels.kt`](https://github.com/chronova/chronova-android/blob/main/app/src/main/java/com/chronova/app/data/ApiModels.kt) | Data classes for requests/responses. |
+| [`SecurePreferences.kt`](https://github.com/chronova/chronova-android/blob/main/app/src/main/java/com/chronova/app/data/SecurePreferences.kt) | `EncryptedSharedPreferences` wrapper for the API key. |
 
 ## Repository
 
 `ChronovaRepository(context)` is instantiated manually wherever it is needed (activities, fragments). It does **not** use constructor injection.
 
+### Storage: plain prefs vs. encrypted prefs
+
+The repository uses two storage backends:
+
+| Storage | Keys | Notes |
+|---------|------|-------|
+| `SharedPreferences` (`chronova_prefs`) | `server_url`, `user_id` | Plain prefs, non-sensitive. |
+| `SecurePreferences` (`secure_prefs`) | `api_key` | `EncryptedSharedPreferences` with an AES256-GCM master key. Falls back to plain prefs (`secure_prefs_fallback`) if encryption fails (e.g. master-key corruption on Android 10+). |
+
+The `SecurePreferences` wrapper (`SecurePreferences.kt`) exposes only `putString`, `getString`, and `remove`; the fallback keeps existing users and test devices from being locked out.
+
 ### SharedPreferences keys
 
 | Key | Content | Default |
 |-----|---------|---------|
-| `api_key` | Bearer token for API calls | `null` |
-| `server_url` | Base URL of the Chronova server | `https://chronova.dev/` |
+| `api_key` | Bearer token for API calls (stored via `SecurePreferences`) | `null` |
+| `server_url` | Base URL of the Chronova server (plain prefs) | `https://chronova.dev/` |
+| `user_id` | Server-side user id, used for leaderboard highlighting (plain prefs) | `null` |
 
 ### Public API
 
@@ -35,6 +50,7 @@ All suspending methods return `Result<T>`:
 
 ```kotlin
 suspend fun login(email: String, password: String): Result<LoginResponse>
+suspend fun exchangeMobileToken(token: String): Result<LoginResponse>
 suspend fun getDashboard(): Result<DashboardResponse>
 suspend fun getLanguages(): Result<LanguageResponse>
 suspend fun getProjects(): Result<ProjectResponse>
@@ -65,6 +81,9 @@ Endpoints mirror a WakaTime-compatible Chronova API:
 @POST("api/auth/login")
 suspend fun login(@Body request: LoginRequest): Response<LoginResponse>
 
+@POST("api/auth/mobile-exchange")
+suspend fun exchangeMobileToken(@Body request: MobileExchangeRequest): Response<LoginResponse>
+
 @GET("api/v1/users/current/stats/{range}")
 suspend fun getStats(
     @Header("Authorization") authorization: String,
@@ -90,7 +109,7 @@ The authorization header is formatted as `Bearer $apiKey` inside the repository.
 
 | Group | Endpoints |
 |-------|-----------|
-| Auth / user | `login`, `getCurrentUser` |
+| Auth / user | `login`, `exchangeMobileToken`, `getCurrentUser` |
 | Stats | `getStats` (range-based), `getProjects` |
 | Activity | `getHeartbeats` |
 | Goals | `getGoals`, `createGoal`, `deleteGoal`, `getGoalSuggestions` |

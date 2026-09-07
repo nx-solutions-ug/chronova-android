@@ -2,7 +2,9 @@
 type: quickstart
 title: Quickstart
 description: Build, install, and run the Chronova Android app for the first time.
-tags: [quickstart, build, install]
+tags: [ quickstart, build, install ]
+last_updated: 2026-09-07T13:59:55.702Z
+updated_by: wiki-agent
 ---
 
 # Quickstart
@@ -41,9 +43,10 @@ adb install app/build/outputs/apk/debug/app-debug.apk
 
 1. Open the app. It starts at `MainActivity` and redirects to `LoginActivity` if no API key is saved.
 2. Enter your **server URL** (default is `https://chronova.dev/`).
-3. Authenticate in one of two ways:
+3. Authenticate in one of three ways:
    - **Login**: email + password → the app saves the returned API key.
    - **API key**: paste an existing API key directly.
+   - **Google / GitHub**: sign in via the provider in a browser tab; the app receives the token through a deep link.
 4. Tap the login / API key button. On success, `MainActivity` loads the dashboard.
 
 ## Main screens

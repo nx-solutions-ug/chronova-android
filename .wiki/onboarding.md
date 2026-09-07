@@ -1,8 +1,11 @@
 ---
 type: onboarding
 title: Onboarding
-description: A first-day walkthrough of the Chronova Android repository, the local setup, and the conventions you must follow.
-tags: [onboarding, setup, contributing]
+description: A first-day walkthrough of the Chronova Android repository, the
+  local setup, and the conventions you must follow.
+tags: [ onboarding, setup, contributing ]
+last_updated: 2026-09-07T14:00:21.385Z
+updated_by: wiki-agent
 ---
 
 # Onboarding
@@ -121,8 +124,8 @@ Start by reading, in this order:
 
 1. `app/src/main/java/com/chronova/app/MainActivity.kt` — entry point,
    bottom navigation, PRO detection.
-2. `app/src/main/java/com/chronova/app/LoginActivity.kt` — both
-   authentication paths.
+2. `app/src/main/java/com/chronova/app/LoginActivity.kt` — the three
+   authentication paths (email/password, API key, OAuth).
 3. `app/src/main/java/com/chronova/app/data/ChronovaRepository.kt` —
    the single source of truth.
 4. `app/src/main/java/com/chronova/app/data/ApiClient.kt` — Retrofit

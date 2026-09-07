@@ -1,8 +1,11 @@
 ---
 type: architecture
 title: Data Flow & Sequences
-description: "End-to-end traces of the major user flows: login, dashboard load, leaderboard, goals, and PRO-gated tabs."
-tags: [architecture, data-flow, sequences, coroutines]
+description: "End-to-end traces of the major user flows: login, dashboard load,
+  leaderboard, goals, and PRO-gated tabs."
+tags: [ architecture, data-flow, sequences, coroutines ]
+last_updated: 2026-09-07T13:59:52.850Z
+updated_by: wiki-agent
 ---
 
 # Data Flow & Sequences
@@ -42,7 +45,7 @@ A few invariants that hold across **every** flow:
 ## 1. First launch → login
 
 `MainActivity` is the launcher. If no API key is stored, it navigates to
-`LoginActivity` and finishes itself. The login screen accepts two paths.
+`LoginActivity` and finishes itself. The login screen accepts three paths.
 
 ### 1a. Email + password
 
@@ -53,7 +56,7 @@ LoginActivity
              └─ apiService.login(LoginRequest)
                   └─ POST https://chronova.dev/api/auth/login
         .onSuccess { resp ->
-            prefs.putString("api_key", resp.apiKey)
+            repository.saveApiKey(resp.apiKey)   // → SecurePreferences (encrypted)
             prefs.putString("user_id", resp.user.id)
             startActivity(MainActivity); finish()
         }
@@ -64,9 +67,30 @@ LoginActivity
 
 ```
 LoginActivity
-   └─ repository.saveApiKey(apiKey)
+   └─ repository.saveApiKey(apiKey)   // → SecurePreferences (encrypted)
    └─ startActivity(MainActivity); finish()
 ```
+
+### 1c. OAuth (Google / GitHub)
+
+```
+LoginActivity.launchOAuth(provider)
+   └─ maybeSaveServerUrl()
+   └─ oauthNonce = UUID.randomUUID()
+   └─ CustomTabsIntent → GET {server}/api/auth/{provider}/login?redirect_uri=/mobile-callback?nonce=...
+        (user authenticates with the provider in the browser)
+   └─ deep link com.chronova.app://oauth/callback?nonce=...&token=...
+        → handleOAuthCallback(intent)            // singleTop → onNewIntent
+        └─ validate nonce, clear intent data
+        └─ repository.exchangeMobileToken(token)
+             └─ POST api/auth/mobile-exchange
+                  → { apiKey, user }
+        .onSuccess { repository.saveApiKey(apiKey); navigateToMain() }
+```
+
+The nonce guards against replayed/mismatched callbacks, and a failed
+exchange only clears prior auth if the user had a session before the
+OAuth attempt.
 
 If the user enters a non-default server URL, `repository.saveServerUrl(url)`
 both writes to `SharedPreferences` **and** calls
