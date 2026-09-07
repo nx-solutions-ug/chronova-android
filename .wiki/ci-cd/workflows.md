@@ -1,8 +1,11 @@
 ---
 type: ci-cd
 title: Workflows
-description: Per-workflow details for the GitHub Actions that build, test, and release the app.
-tags: [ci-cd, github-actions, build, release]
+description: Per-workflow details for the GitHub Actions that build, test, and
+  release the app.
+tags: [ ci-cd, github-actions, build, release ]
+last_updated: 2026-09-07T14:00:15.088Z
+updated_by: wiki-agent
 ---
 
 # Workflows
@@ -28,8 +31,7 @@ This page documents the workflows that build and test the APK.
    `gradle-wrapper.properties`. Fallback restore-keys use just the OS so
    partial cache hits still warm the daemon.
 5. **Grant execute permission for gradlew** — `chmod +x gradlew`.
-6. **Run unit tests** — `./gradlew testDebugUnitTest --stacktrace`. Currently
-   a no-op because no tests exist.
+6. **Run unit tests** — `./gradlew testDebugUnitTest --stacktrace`. Runs the single `InputStyleContractTest` (input-style regression guard).
 7. **Build Debug APK** — `./gradlew assembleDebug --stacktrace`.
 8. **Build Release APK** — `./gradlew assembleRelease --stacktrace`.
 9. **Upload artifacts**:

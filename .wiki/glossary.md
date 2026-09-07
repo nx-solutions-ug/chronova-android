@@ -2,7 +2,9 @@
 type: glossary
 title: Glossary
 description: Domain terms and acronyms used throughout the codebase and this wiki.
-tags: [glossary, terms, definitions]
+tags: [ glossary, terms, definitions ]
+last_updated: 2026-09-07T14:00:01.583Z
+updated_by: wiki-agent
 ---
 
 # Glossary
@@ -23,7 +25,7 @@ something is unfamiliar.
 
 | Term | Meaning |
 |------|---------|
-| **API key** | A bearer token stored in `SharedPreferences["api_key"]`. Sent as `Authorization: Bearer <key>`. |
+| **API key** | A bearer token stored encrypted under `SecurePreferences["api_key"]` (`EncryptedSharedPreferences`; falls back to plain prefs if encryption fails). Sent as `Authorization: Bearer <key>`. |
 | **user_id** | The server-side user id, stored in `SharedPreferences["user_id"]`, used to highlight the current user on the leaderboard. |
 | **PRO user** | A user for whom `has_premium_features == true` on the server. PRO unlocks the full dashboard range, the leaderboard's 30/90-day chips, and the AI Insights / Focus tabs. |
 | **has_premium_features** | The single server-computed field the client reads for PRO status. Already includes individual subscriptions, comped PRO, and organization subscriptions — the client does not re-derive it. |
@@ -88,7 +90,7 @@ The string tokens used as `range` query values and as fragment arguments:
 
 | Term | Meaning |
 |------|---------|
-| **OMP** | The LLM-driven automation agent ("opencode agent"). Installed in CI; runs triage, label, and review jobs. Model: `ollama-cloud/minimax-m3`. |
+| **OMP** | The LLM-driven automation agent ("opencode agent"). Installed in CI; runs triage, label, and review jobs. Model: `ollama-cloud/glm-5.3-flash:max`. |
 | **OMP commands** | Markdown prompt templates in `.omp/commands/`. `$ARGUMENTS` is replaced at runtime. |
 | **Vouch system** | PR gate. External contributors must be vouched by a maintainer in a Discussion before opening a PR. Implemented with `mitchellh/vouch` and `.github/VOUCHED.td`. |
 | **Wiki agent** | `@chronova/wiki-agent`. Runs in `update-wiki.yml` and writes to `.wiki/`. |

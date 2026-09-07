@@ -2,17 +2,20 @@
 type: build
 title: Build & Deploy
 description: Gradle commands, release signing, and Docker builds for Chronova Android.
-tags: [build, gradle, docker, release]
+tags: [ build, gradle, docker, release ]
+last_updated: 2026-09-07T14:00:12.997Z
+updated_by: wiki-agent
 ---
 
 # Build & Deploy
 
 ## Build environment
 
-- **Gradle**: 9.2.1 (wrapper distribution)
-- **Android Gradle Plugin**: 8.13.2
-- **Kotlin**: 2.1.20
-- **Compile / Target SDK**: 36
+- **Gradle**: 9.7.1 (wrapper distribution)
+- **Android Gradle Plugin**: 9.4.0
+- **Kotlin**: 2.4.10 (with `kotlin-parcelize`)
+- **Compile SDK**: 37
+- **Target SDK**: 36
 - **Min SDK**: 24
 - **JVM target**: 17
 - **Build tool**: command line Gradle or Android Studio Ladybug+
@@ -26,20 +29,22 @@ Current versions are defined in `app/build.gradle`:
 | Category | Library | Version |
 |----------|---------|---------|
 | UI core | `androidx.core:core-ktx` | 1.19.0 |
-| UI core | `androidx.appcompat:appcompat` | 1.7.1 |
-| UI core | `com.google.android.material:material` | 1.13.0 |
-| UI core | `androidx.constraintlayout:constraintlayout` | 2.2.1 |
-| Navigation | `androidx.navigation:navigation-fragment-ktx` | 2.9.8 |
-| Navigation | `androidx.navigation:navigation-ui-ktx` | 2.9.8 |
-| Lifecycle | `androidx.lifecycle:lifecycle-viewmodel-ktx` | 2.10.0 |
+| UI core | `androidx.appcompat:appcompat` | 1.8.0 |
+| UI core | `com.google.android.material:material` | 1.14.0 |
+| UI core | `androidx.constraintlayout:constraintlayout` | 2.2.2 |
+| Navigation | `androidx.navigation:navigation-fragment-ktx` | 2.10.0 |
+| Navigation | `androidx.navigation:navigation-ui-ktx` | 2.10.0 |
+| Lifecycle | `androidx.lifecycle:lifecycle-viewmodel-ktx` | 2.11.0 |
 | Lifecycle | `androidx.lifecycle:lifecycle-livedata-ktx` | 2.11.0 |
 | Networking | `com.squareup.retrofit2:retrofit` | 3.0.0 |
 | Networking | `com.squareup.retrofit2:converter-gson` | 3.0.0 |
-| Networking | `com.squareup.okhttp3:logging-interceptor` | 5.3.2 |
+| Networking | `com.squareup.okhttp3:logging-interceptor` | 5.5.0 |
 | Charts | `com.github.PhilJay:MPAndroidChart` (JitPack) | 3.1.0 |
 | Lists | `androidx.recyclerview:recyclerview` | 1.4.0 |
 | Paging | `androidx.viewpager2:viewpager2` | 1.1.0 |
 | Storage | `androidx.preference:preference-ktx` | 1.2.1 |
+| OAuth | `androidx.browser:browser` (Custom Tabs for Google/GitHub login) | 1.10.0 |
+| Security | `androidx.security:security-crypto` (encrypted API key storage) | 1.1.0 |
 | Tests | `junit:junit` (unit) | 4.13.2 |
 | Tests | `androidx.test.ext:junit` (instrumented) | 1.3.0 |
 | Tests | `androidx.test.espresso:espresso-core` | 3.7.0 |
@@ -73,6 +78,8 @@ Output APK:
 ```
 app/build/outputs/apk/release/app-release.apk
 ```
+
+App version (current): `versionCode 4`, `versionName "1.1.2"` in `app/build.gradle`.
 
 ### Release signing
 

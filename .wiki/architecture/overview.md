@@ -2,7 +2,9 @@
 type: architecture
 title: Architecture Overview
 description: How Chronova Android is structured and how the layers interact.
-tags: [architecture, mvvm, repository]
+tags: [ architecture, mvvm, repository ]
+last_updated: 2026-09-07T14:00:17.947Z
+updated_by: wiki-agent
 ---
 
 # Architecture Overview
@@ -47,12 +49,13 @@ Chronova Android uses a **custom MVVM + Repository Pattern**. It deliberately av
 ```
 app/src/main/java/com/chronova/app/
 ├── MainActivity.kt              # Launcher, bottom nav, toolbar, logout, PRO badge
-├── LoginActivity.kt             # Login or API-key authentication
+├── LoginActivity.kt             # Email/password, API key, or OAuth (Google/GitHub) authentication
 ├── data/
 │   ├── ApiClient.kt             # Retrofit singleton
 │   ├── ApiModels.kt             # Request/response DTOs
 │   ├── ChronovaApiService.kt    # Retrofit interface
-│   └── ChronovaRepository.kt    # Single source of truth
+│   ├── ChronovaRepository.kt    # Single source of truth
+│   └── SecurePreferences.kt     # EncryptedSharedPreferences wrapper for the API key
 └── ui/
     ├── main/
     │   ├── MainPagerFragment.kt # Dashboard ranges (free vs. PRO)
