@@ -4,7 +4,7 @@ title: Wiki Pipeline
 description: How the wiki under .wiki/ is generated, staged, and published to
   the GitHub Wiki tab.
 tags: [ ci-cd, wiki, github-actions, docs ]
-last_updated: 2026-09-07T17:06:28.396Z
+last_updated: 2026-09-09T01:56:38.392Z
 updated_by: wiki-agent
 ---
 
@@ -16,11 +16,13 @@ flattening step converts the nested `.wiki/` directory into the flat
 layout the Wiki tab expects (e.g. `.wiki/architecture/overview.md` →
 `Architecture-Overview.md`).
 
-The pipeline runs on three triggers:
+The pipeline runs on two triggers:
 
-- `push` to `main` — keeps the wiki in sync with merged content.
-- `schedule` — `0 8 * * *` (daily) — catches content drift.
+- `schedule` — `0 0 * * *` (daily at 00:00 UTC) — the primary trigger.
 - `workflow_dispatch` — manual reruns.
+
+There is no `push` trigger: the daily run is the only automatic sync with
+merged content.
 
 ## Flow
 
