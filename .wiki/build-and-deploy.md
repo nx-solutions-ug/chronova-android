@@ -3,7 +3,7 @@ type: build
 title: Build & Deploy
 description: Gradle commands, release signing, and Docker builds for Chronova Android.
 tags: [ build, gradle, docker, release ]
-last_updated: 2026-09-07T17:07:51.593Z
+last_updated: 2026-09-11T01:50:14.825Z
 updated_by: wiki-agent
 ---
 
@@ -33,7 +33,7 @@ Current versions are defined in `app/build.gradle`:
 | UI core | `com.google.android.material:material` | 1.14.0 |
 | UI core | `androidx.constraintlayout:constraintlayout` | 2.2.2 |
 | Navigation | `androidx.navigation:navigation-fragment-ktx` | 2.10.0 |
-| Navigation | `androidx.navigation:navigation-ui-ktx` | 2.10.0 |
+| Navigation | `androidx.navigation:navigation-ui-ktx` | 2.10.1 |
 | Lifecycle | `androidx.lifecycle:lifecycle-viewmodel-ktx` | 2.11.0 |
 | Lifecycle | `androidx.lifecycle:lifecycle-livedata-ktx` | 2.11.0 |
 | Networking | `com.squareup.retrofit2:retrofit` | 3.0.0 |
