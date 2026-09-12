@@ -50,7 +50,7 @@ Custom MVVM + Repository pattern. No DI framework, no AAC ViewModel — Fragment
 | `app/src/main/res/layout/` | 19 XML layouts (activities, fragments, item views) |
 | `app/src/main/res/drawable/` | Icons and drawables |
 | `.github/workflows/` | CI/CD (build, release, OMP agent, auto-manage) |
-| `.omp/` | OMP agent config, rules, command templates |
+| `.claude/` | Claude Code project commands used by CI automation |
 | `.wiki/` | Architecture and quickstart documentation |
 | `docs/` | Build guides and troubleshooting |
 
@@ -241,12 +241,12 @@ GitHub Actions workflows in `.github/workflows/`:
 | Workflow | Trigger | Purpose |
 |----------|---------|---------|
 | `build.yml` | Manual (`workflow_dispatch`) | JDK 17 + Android SDK setup, `testDebugUnitTest`, `assembleDebug`, `assembleRelease`, uploads APK artifacts (7-day debug, 30-day release retention) |
-| `omp-ci.yml` | Issues opened, PR opened/ready_for_review | OMP agent triages issues, labels PRs (type + priority). Uses model `ollama-cloud/glm-5.3-flash:max` |
-| `omp-code-review.yml` | PR opened/synchronize/ready_for_review/review_requested, review comments, manual dispatch | OMP agent reviews PRs: dependency reviews for renovate/dependabot PRs, full code review with thread resolution otherwise. Skips re-review for agent-authored commits. Uses model `ollama-cloud/glm-5.3-flash:max` |
-| `omp.yml` | Issue/PR comments containing `/omp` | OMP agent execution on-demand via comments. Expands `.omp/commands/*.md` templates |
+| `claude-ci.yml` | Issues opened, PR opened/ready_for_review, manual dispatch | Claude triages issues, labels PRs (type + priority). Uses model `claude-sonnet-5` |
+| `claude-code-review.yml` | PR opened/synchronize/ready_for_review/review_requested, review comments, manual dispatch | Claude reviews PRs: dependency reviews for renovate/dependabot PRs, full code review with thread resolution otherwise. Skips re-review for agent-authored commits. Uses model `claude-sonnet-5` |
+| `claude.yml` | Issue/PR comments containing `/claude` or `@claude` | Claude execution on-demand via comments. Resolves `.claude/commands/*.md` as slash commands |
 | `auto-manage.yml` | Issues opened/reopened, PRs opened | Tags issues `needs-triage`, auto-assigns to `niklasschaeffer` |
 
-**OMP agent**: Installed via `curl -fsSL https://omp.sh/install | sh` in CI. Command templates in `.omp/commands/` (e.g., `triage-issue.md`, `review-pr.md`, `label-pr.md`, `dependency-review.md`). Output formatted by `.omp/stream-log.py`.
+**Claude Code**: Run via `anthropics/claude-code-action@v1` in CI, authenticated with the `CLAUDE_CODE_OAUTH_TOKEN` org secret. Commands in `.claude/commands/` (e.g., `triage-issue.md`, `review-pr.md`, `label-pr.md`, `dependency-review.md`, `fix-issue.md`), invoked as slash commands with the issue or PR number as `$ARGUMENTS`.
 
 **Release Drafter** (`.github/release-drafter.yml`): Categorizes PRs by label — Features, Bug Fixes, Maintenance, Dependencies.
 
