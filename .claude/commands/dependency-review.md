@@ -42,7 +42,7 @@ If you cannot find release notes, state so explicitly. Do NOT fabricate changes.
 
 ## Step 3: Assess Impact on Chronova Android
 
-- Check project standards in `AGENTS.md` and `.wiki/` for dependency guidelines.
+- Check project standards in `AGENTS.md` for dependency guidelines.
 - Check whether version constraints in `app/build.gradle` are compatible.
 - For library updates: check if any deprecated or removed APIs are used in `app/src/main/` (scan imports and usage across `app/src/main/`).
 - Note any new features or performance improvements we might leverage.
