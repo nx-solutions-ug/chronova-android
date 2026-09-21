@@ -255,3 +255,72 @@ GitHub Actions workflows in `.github/workflows/`:
 - **PRO status**: `MainPagerFragment` dynamically adjusts tab count based on PRO subscription (more tabs for PRO users).
 - **WakaTime compatibility**: API models reference WakaTime-style responses; the Chronova server API mirrors WakaTime's structure.
 - **Signing credentials are hardcoded**: `storePassword: 'chronova123'`, `keyPassword: 'chronova123'`, `keyAlias: 'chronova'` in `app/build.gradle`. Keystore file is committed to the repo.
+
+## Structural code search (ast-grep)
+
+Use `ast-grep` — not `grep`/`rg` — for anything **structural**: finding call
+sites, function/class/composable shapes, or code matching a pattern rather than
+a string. Use it for **every multi-file rewrite**. Text search also hits
+comments, strings and unrelated identifiers; ast-grep matches AST nodes.
+
+Fall back to `rg` only for literal text and non-code files (Markdown, Gradle
+properties, XML resources — ast-grep does not parse those).
+
+```bash
+# Search — single-node patterns. Always single-quote: "$A" is shell-expanded.
+ast-grep run -p 'Log.d($TAG, $MSG)' -l kotlin app/src/
+ast-grep run -p 'runBlocking { $$$B }' -l kotlin --json app/src/ | jq -r '.[].file'
+
+# Search — relational / composite queries
+ast-grep scan --inline-rules 'id: suspend-io
+language: Kotlin
+rule:
+  kind: function_declaration
+  has:
+    pattern: withContext($D) { $$$B }
+    stopBy: end' app/src/
+
+# Rewrite — prints a diff by default; -i reviews each edit, -U applies all
+ast-grep run -p 'Log.d($TAG, $MSG)' -r 'Timber.d($MSG)' -l kotlin -i app/src/
+```
+
+Non-obvious rules, in the order they bite:
+
+- Invoke it as `ast-grep`, never the `sg` alias — `sg` collides with
+  shadow-utils' setgid tool on Linux.
+- **Single-quote patterns.** `"$A && $A()"` reaches ast-grep as `" && ()"`
+  after shell expansion.
+- In relational rules (`has`, `inside`, `precedes`, `follows`) set
+  `stopBy: end`, or the search stops at the first non-matching node.
+- **Write inline rules in block YAML, not flow maps.** `has: { pattern: withContext($D) { $$$B }, stopBy: end }`
+  fails to parse — the pattern's `}` closes the flow mapping. Indented keys
+  always work.
+- **Zero matches ≠ code absent.** Patterns match whole AST nodes, so
+  `-p 'd($TAG, $MSG)'` does _not_ match `Log.d("TAG", "msg")`. Before
+  concluding something isn't there, inspect the parse: `--debug-query=pattern`
+  shows how ast-grep read your pattern, `--debug-query=ast` shows named nodes.
+- `--inline-rules` works in any directory; bare `ast-grep scan` (project rule
+  dirs) requires an `sgconfig.yml` at the repo root.
+- Not on `PATH` — CI runners included: `bun add -g @ast-grep/cli`.
+
+Full reference: <https://ast-grep.github.io/llms-full.txt>
+
+When a query needs a real YAML rule rather than a one-line pattern, invoke the
+`ast-grep:ast-grep` skill (rule syntax, relational/composite rules, debugging
+checklist); `ast-grep:outline` gives a file's structure. Both ship with the
+`ast-grep` plugin; when it isn't installed (CI runners), fall back to the
+reference linked above rather than reconstructing rule syntax from memory.
+
+## Claude Code CI automation
+
+The `.github/workflows/claude-*.yml` workflows run Claude Code through
+`anthropics/claude-code-action@v1` and invoke the project commands in
+`.claude/commands/` as slash commands, e.g. `/review-pr 42`. `$ARGUMENTS` is
+expanded by Claude Code itself.
+
+Tool permissions for those runs are declared centrally per job via
+`claude_args: --allowedTools ...` in the workflow — deliberately not in command
+frontmatter, so there is one place to look.
+
+`gh label create` is not idempotent: it exits 422 when the label already
+exists. Always append `|| true`.
