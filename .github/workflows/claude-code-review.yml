@@ -318,6 +318,10 @@ jobs:
       - name: Run code review
         id: claude
         uses: anthropics/claude-code-action@v1
+        # Consumed by review-pr.md. This job installs no toolchain, so the
+        # reviewer reads the diff and says so rather than claiming otherwise.
+        env:
+          TOOLCHAIN_READY: 'false'
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           github_token: ${{ steps.app-token.outputs.token }}
