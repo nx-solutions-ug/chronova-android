@@ -161,16 +161,47 @@ Check for ALL of the following (backed by `AGENTS.md`):
 - Do NOT comment on pre-existing code outside of this PR's diff.
 - Do NOT comment on formatting handled by the IDE or linter.
 
-## Step 4.5: No toolchain in this job
+## Step 4.5: Read the Gradle gates
 
-This review job installs no Gradle toolchain — the Android build is too
-expensive to run on every review. `TOOLCHAIN_READY` is `false` here and stays
-that way.
+`build.yml` runs on `workflow_dispatch` only, so this pull request gets no
+other build. The review job runs the gates itself, as workflow steps, and hands
+you the result:
 
-Review from the diff, and say so in one sentence in the review body. State the
-limitation as a known one rather than presenting a read of the diff as a
-verified result: a review that claims verification it did not perform is worse
-than one that admits what it could not check.
+```bash
+echo "TOOLCHAIN_READY=${TOOLCHAIN_READY:-false}"
+echo "GRADLE_GATES=${GRADLE_GATES:-unknown}"
+```
+
+- `TOOLCHAIN_READY=false` — the Android SDK setup failed, so no build ran.
+  Review from the diff and say so in one sentence in the review body.
+- `GRADLE_GATES=success` — `./gradlew testDebugUnitTest` compiled the debug
+  sources and the unit tests passed.
+- `GRADLE_GATES=failure` — read the log and report what broke:
+
+```bash
+tail -n 120 "$GRADLE_GATES_LOG"
+grep -nE "^e: |FAILED|error:|> Task .* FAILED" "$GRADLE_GATES_LOG" | head -40
+```
+
+**Do not run `./gradlew` yourself.** A Gradle build script is code, this job
+checks out the pull request's own head, and by the time you are running the
+`chronova-agent` token is in the runner's gh config. The build already ran
+without it, which is why the result reaches you as a log rather than as a
+command to repeat.
+
+How to report what the log says:
+
+- **A compile error (`e: ...`) or a failing test in a file this pull request
+  touches**: blocking, and the finding goes on the line that causes it.
+- **A failure in code the diff does not touch**: name it in the review body as
+  pre-existing rather than as a finding against this author.
+- **A green run**: say so, and say what it covered — `testDebugUnitTest` is the
+  debug variant and the unit tests, not `assembleRelease`, not instrumentation
+  tests, and not Android Lint.
+
+State in the review body which of these you actually read. A review that claims
+verification it did not perform is worse than one that admits what it could not
+check.
 
 ## Step 5: Deduplicate Findings
 

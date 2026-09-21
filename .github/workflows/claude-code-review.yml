@@ -274,7 +274,11 @@ jobs:
     needs: review-gate
     if: needs.review-gate.outputs.skip != 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    # A cold Gradle cache downloads the wrapper distribution, AGP and the
+    # dependency graph before the first test runs, and the review follows that
+    # in the same job. 30 minutes covered a review alone; being killed halfway
+    # means no review is posted at all.
+    timeout-minutes: 45
     permissions:
       contents: read
       pull-requests: write
@@ -300,6 +304,54 @@ jobs:
           fetch-depth: 0  # Required for git diff against base branch to prevent HTTP 406 on >300 files
           persist-credentials: false
 
+      # chronova-android has no CI on pull requests: build.yml runs only on
+      # workflow_dispatch. These gates are therefore the only build this diff
+      # gets before it lands. JDK, SDK and the Gradle cache key match build.yml,
+      # so a failure here is a failure there.
+      #
+      # The gates run as workflow steps, before the app token exists, and that
+      # is the Android-specific part. In the sibling repositories the reviewer
+      # runs its own gates, because `bun run type-check` does not execute the
+      # pull request's code. `./gradlew` does: a build script is code, and this
+      # job checks out `refs/pull/<n>/head`. Running it here keeps it away from
+      # a privileged `chronova-agent` token, which the review-triggered paths
+      # carry even for a fork. The reviewer reads the result instead of
+      # producing it.
+      - name: Set up JDK 17
+        uses: actions/setup-java@v6
+        with:
+          java-version: "17.0.20+101"
+          distribution: "temurin"
+
+      - name: Setup Android SDK
+        id: install
+        continue-on-error: true
+        uses: android-actions/setup-android@v4
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v6
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Run Gradle gates
+        id: gradle
+        # `testDebugUnitTest` compiles the debug sources and runs the unit
+        # tests, which is what build.yml checks first. A red build must not
+        # cost the pull request its review — the reviewer reports it from the
+        # log instead, and the log is the deliverable of this step.
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          ./gradlew testDebugUnitTest --stacktrace 2>&1 | tee "${RUNNER_TEMP}/gradle-gates.log"
+
       - name: Generate app token
         id: app-token
         uses: actions/create-github-app-token@v3
@@ -323,10 +375,12 @@ jobs:
       - name: Run code review
         id: claude
         uses: anthropics/claude-code-action@v1
-        # Consumed by review-pr.md. This job installs no toolchain, so the
-        # reviewer reads the diff and says so rather than claiming otherwise.
+        # Consumed by review-pr.md's gate step. Step-level, because job-level
+        # `env` cannot read `steps.*`.
         env:
-          TOOLCHAIN_READY: 'false'
+          TOOLCHAIN_READY: ${{ steps.install.outcome == 'success' }}
+          GRADLE_GATES: ${{ steps.gradle.outcome }}
+          GRADLE_GATES_LOG: ${{ runner.temp }}/gradle-gates.log
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           github_token: ${{ steps.app-token.outputs.token }}
