@@ -161,6 +161,17 @@ Check for ALL of the following (backed by `AGENTS.md`):
 - Do NOT comment on pre-existing code outside of this PR's diff.
 - Do NOT comment on formatting handled by the IDE or linter.
 
+## Step 4.5: No toolchain in this job
+
+This review job installs no Gradle toolchain — the Android build is too
+expensive to run on every review. `TOOLCHAIN_READY` is `false` here and stays
+that way.
+
+Review from the diff, and say so in one sentence in the review body. State the
+limitation as a known one rather than presenting a read of the diff as a
+verified result: a review that claims verification it did not perform is worse
+than one that admits what it could not check.
+
 ## Step 5: Deduplicate Findings
 
 For each finding identified in Step 4, check UNRESOLVED threads for semantic matches:
