@@ -172,7 +172,8 @@ echo "TOOLCHAIN_READY=${TOOLCHAIN_READY:-false}"
 echo "GRADLE_GATES=${GRADLE_GATES:-unknown}"
 ```
 
-- `TOOLCHAIN_READY=false` — the Android SDK setup failed, so no build ran.
+- `TOOLCHAIN_READY=false` — the JDK or the Android SDK setup failed, so the
+  gates were skipped and `GRADLE_GATES=skipped`. There is no log to read.
   Review from the diff and say so in one sentence in the review body.
 - `GRADLE_GATES=success` — `./gradlew testDebugUnitTest` compiled the debug
   sources and the unit tests passed.
