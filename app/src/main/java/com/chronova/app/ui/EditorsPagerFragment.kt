@@ -14,6 +14,12 @@ class EditorsPagerFragment : Fragment() {
 
     private var _binding: FragmentEditorsPagerBinding? = null
     private val binding get() = _binding!!
+    private var isProUser: Boolean = false
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        isProUser = arguments?.getBoolean(StatsRanges.ARG_IS_PRO_USER, false) ?: false
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,17 +36,12 @@ class EditorsPagerFragment : Fragment() {
     }
 
     private fun setupViewPager() {
-        val adapter = EditorsPagerAdapter(requireActivity())
+        val ranges = StatsRanges.forPlan(isProUser)
+        val adapter = EditorsPagerAdapter(requireActivity(), ranges.map { it.first })
         binding.viewPager.adapter = adapter
 
-        // Setup tabs like Timeless app (Today, Last 7 Days, Last 30 Days)
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
-            tab.text = when (position) {
-                0 -> "Today"
-                1 -> "Last 7 Days"
-                2 -> "Last 30 Days"
-                else -> ""
-            }
+            tab.text = ranges.getOrNull(position)?.second ?: ""
         }.attach()
     }
 
@@ -49,16 +50,16 @@ class EditorsPagerFragment : Fragment() {
         _binding = null
     }
 
-    private class EditorsPagerAdapter(activity: FragmentActivity) : FragmentStateAdapter(activity) {
-        override fun getItemCount(): Int = 3
+    private class EditorsPagerAdapter(
+        activity: FragmentActivity,
+        private val ranges: List<String>
+    ) : FragmentStateAdapter(activity) {
+        override fun getItemCount(): Int = ranges.size
 
         override fun createFragment(position: Int): Fragment {
-            return when (position) {
-                0 -> EditorsStatsFragment.newInstance("today")
-                1 -> EditorsStatsFragment.newInstance("last_7_days") 
-                2 -> EditorsStatsFragment.newInstance("last_30_days")
-                else -> throw IllegalArgumentException("Invalid position: $position")
-            }
+            val range = ranges.getOrNull(position)
+                ?: throw IllegalArgumentException("Invalid position: $position")
+            return EditorsStatsFragment.newInstance(range)
         }
     }
 }

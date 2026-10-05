@@ -14,6 +14,12 @@ class ProjectsContainerFragment : Fragment() {
 
     private var _binding: FragmentProjectsContainerBinding? = null
     private val binding get() = _binding!!
+    private var isProUser: Boolean = false
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        isProUser = arguments?.getBoolean(StatsRanges.ARG_IS_PRO_USER, false) ?: false
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,7 +36,7 @@ class ProjectsContainerFragment : Fragment() {
     }
 
     private fun setupViewPager() {
-        val adapter = ProjectsContainerPagerAdapter(requireActivity())
+        val adapter = ProjectsContainerPagerAdapter(requireActivity(), isProUser)
         binding.categoryViewPager.adapter = adapter
 
         TabLayoutMediator(binding.categoryTabLayout, binding.categoryViewPager) { tab, position ->
@@ -47,7 +53,10 @@ class ProjectsContainerFragment : Fragment() {
         _binding = null
     }
 
-    private class ProjectsContainerPagerAdapter(activity: FragmentActivity) : FragmentStateAdapter(activity) {
+    private class ProjectsContainerPagerAdapter(
+        activity: FragmentActivity,
+        private val isProUser: Boolean
+    ) : FragmentStateAdapter(activity) {
         override fun getItemCount(): Int = 2
 
         override fun createFragment(position: Int): Fragment {
@@ -55,6 +64,8 @@ class ProjectsContainerFragment : Fragment() {
                 0 -> ProjectsPagerFragment()
                 1 -> EditorsPagerFragment()
                 else -> throw IllegalArgumentException("Invalid position: $position")
+            }.apply {
+                arguments = Bundle().apply { putBoolean(StatsRanges.ARG_IS_PRO_USER, isProUser) }
             }
         }
     }

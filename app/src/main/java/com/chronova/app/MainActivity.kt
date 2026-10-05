@@ -77,7 +77,10 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_projects -> {
-                    replaceFragment(ProjectsContainerFragment())
+                    val frag = ProjectsContainerFragment().apply {
+                        arguments = Bundle().apply { putBoolean("is_pro_user", isProUser) }
+                    }
+                    replaceFragment(frag)
                     updateTitleWithProBadge("Projects")
                     true
                 }
