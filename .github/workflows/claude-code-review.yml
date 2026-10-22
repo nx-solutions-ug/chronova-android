@@ -335,7 +335,7 @@ jobs:
         continue-on-error: true
         uses: actions/setup-java@v6
         with:
-          java-version: "17.0.20+101"
+          java-version: "17.0.21+9"
           distribution: "temurin"
 
       - name: Setup Android SDK
